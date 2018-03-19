@@ -2,13 +2,20 @@
   <section class="container">
     <img src="~assets/img/logo.png" alt="Nuxt.js Logo" class="logo" />
     <h1 class="title">
-      Calculator
+      Calculators
     </h1>
     <h2 class="info">
       {{ calculator.name }}
     </h2>
-    <nuxt-link class="button" to="/">
-      calculators
+    <b-container>
+      <b-row v-for="uComp in calculator.userComponents" :key="uComp.id">
+        <b-form-group v-if="uComp.type.render.tag === 'input'" v-bind:label="uComp.label" v-bind:label-for="uComp.id">
+          <b-input v-bind:id="uComp.id" v-model="uComp.value" v-bind:type="uComp.type.render.type"></b-input>
+        </b-form-group>
+      </b-row>
+    </b-container>
+    <nuxt-link tag="b-button" :to="{ name: 'calculators' }">
+      All Calculators
     </nuxt-link>
   </section>
 </template>
@@ -36,19 +43,4 @@ export default {
 </script>
 
 <style scoped>
-.title
-{
-  margin-top: 30px;
-}
-.info
-{
-  font-weight: 300;
-  color: #9aabb1;
-  margin: 0;
-  margin-top: 10px;
-}
-.button
-{
-  margin-top: 30px;
-}
 </style>

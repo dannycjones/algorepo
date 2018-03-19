@@ -4,7 +4,13 @@ const router = Router();
 
 // Mock Calculators
 const calculators = [
-  { name: 'Calc 1' },
+  {
+    name: 'Calc 1',
+    userComponents: [
+      { id: 'age', type: { purpose: 'block', render: { tag: 'input', type: 'number' } }, value: 0, label: 'Age 1' },
+      { id: 'age2', type: { purpose: 'block', render: { tag: 'input', type: 'number' } }, value: 12, label: 'Age 2' },
+      { id: 'age3', type: { purpose: 'block', render: { tag: 'input', type: 'number' } }, label: 'Age 3' }
+    ] },
   { name: 'Calc 2' },
   { name: 'Calc 3' }
 ];
