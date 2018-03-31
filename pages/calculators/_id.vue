@@ -1,34 +1,33 @@
 <template>
-  <section class="container">
-    <img src="~assets/img/logo.png" alt="Nuxt.js Logo" class="logo" />
-    <h1 class="title">
-      Calculators
-    </h1>
-    <h2 class="info">
-      {{ calculator.name }}
-    </h2>
-    <b-container>
-      <b-row v-for="uComp in calculator.userComponents" :key="uComp.id">
-        <b-form-group v-if="uComp.type.render.tag === 'input'" v-bind:label="uComp.label" v-bind:label-for="uComp.id">
-          <b-input v-bind:id="uComp.id" v-model="uComp.value" v-bind:type="uComp.type.render.type"></b-input>
-        </b-form-group>
-      </b-row>
-    </b-container>
-    <nuxt-link tag="b-button" :to="{ name: 'calculators' }">
-      All Calculators
-    </nuxt-link>
-  </section>
+  <b-container class="container">
+    <b-row>
+      <b-col>
+        <img src="~assets/img/logo.png" alt="Nuxt.js Logo" class="logo" />
+        <h1 class="title">
+          Calculators
+        </h1>
+        <h2 class="info">
+          {{ calculator.name }}
+        </h2>
+        <calculator-form :calculator="calculator"></calculator-form>
+        <nuxt-link tag="b-button" :to="{ name: 'calculators' }">
+          All Calculators
+        </nuxt-link>
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
 import axios from '~/plugins/axios';
+import CalculatorForm from '~/components/CalculatorForm.vue';
 
 export default {
   name: 'id',
   asyncData ({ params, error }) {
     return axios.get('/api/calculators/' + params.id)
       .then((res) => {
-        return { calculator: res.data };
+        return { calculator: res.data, hello: 7, inputType: 'select' };
       })
       .catch((e) => {
         error({ statusCode: 404, message: 'calculator not found' });
@@ -38,9 +37,11 @@ export default {
     return {
       title: `calculator: ${this.calculator.name}`
     };
+  },
+  components: {
+    CalculatorForm
   }
 };
 </script>
-
 <style scoped>
 </style>
