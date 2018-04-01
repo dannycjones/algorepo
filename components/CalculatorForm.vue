@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import axios from '~/plugins/axios';
 import MultiOptionInput from '~/components/MultiOptionInput.vue';
 
 export default {
@@ -42,6 +43,20 @@ export default {
   },
   components: {
     MultiOptionInput
+  },
+  watch: {
+    formData: {
+      deep: true,
+      handler () {
+        return axios.post(`/api/calculators/${this.calculator.id}/calculate`, { formData: this.formData })
+          .then(res => {
+            Object.entries(res.data.results).forEach(([key, value]) => {
+              this.resultBlockValues[key] = value;
+            });
+          })
+          .catch(console.error);
+      }
+    }
   }
 };
 </script>

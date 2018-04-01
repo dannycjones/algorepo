@@ -12,8 +12,8 @@
     
     function resolveSymbol(parser, symbol){
         const flatSymbol = flatten(symbol).join("");
-        if (!parser.symbols.hasOwnProperty(flatSymbol)) { throw new Error('Variable not defined') };
-        return parser.symbols[flatSymbol];
+        if (!parser.symbols.hasOwnProperty(flatSymbol)) { throw new Error(`Variable, ${symbol}, not defined`) };
+        return parseFloat(parser.symbols[flatSymbol], 10);
     }
 }
 
