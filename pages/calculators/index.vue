@@ -7,8 +7,8 @@
       </h1>
       <b-alert show>Default Alert</b-alert>
       <ul class="calculators">
-        <li v-for="(calculator, index) in calculators" :key="index" class="calculator">
-          <nuxt-link :to="{ name: 'calculators-id', params: { id: index }}">
+        <li v-for="calculator in calculators" :key="calculator._id" class="calculator">
+          <nuxt-link :to="{ name: 'calculators-id', params: { id: calculator._id }}">
             {{ calculator.name }}
           </nuxt-link>
         </li>
