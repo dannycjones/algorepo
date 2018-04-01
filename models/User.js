@@ -5,6 +5,8 @@ const schema = new Schema({
   name: String,
   username: String,
   seeded: { type: Boolean, default: false }
+}, {
+  timestamps: true
 });
 
 const User = mongoose.model('User', schema);

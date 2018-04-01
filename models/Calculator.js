@@ -20,9 +20,10 @@ var Schema = mongoose.Schema;
 const schema = new Schema({
   name: String,
   blocks: [],
-  publishDate: { type: Date, default: Date.now },
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   seeded: { type: Boolean, default: false }
+}, {
+  timestamps: true
 });
 
 const Calculator = mongoose.model('Calculator', schema);
