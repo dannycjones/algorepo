@@ -6,4 +6,9 @@ const router = Router();
 
 router.use(calculators);
 
+router.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.sendStatus(500);
+});
+
 export default router;
