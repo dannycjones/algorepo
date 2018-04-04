@@ -5,7 +5,7 @@ import Calculator from '../../models/Calculator';
 
 const router = Router();
 
-router.get('/calculators', (req, res, next) => {
+router.get('/', (req, res, next) => {
   Calculator.find({}, (err, calculators) => {
     if (!err) {
       return res.send(calculators);
@@ -14,14 +14,14 @@ router.get('/calculators', (req, res, next) => {
   });
 });
 
-router.get('/calculators/:id', (req, res, next) => {
+router.get('/:id', (req, res, next) => {
   Calculator.findById(req.params.id, (err, calculator) => {
     if (err) res.sendStatus(404);
     res.send(calculator);
   });
 });
 
-router.post('/calculators/:id/calculate', async (req, res, next) => {
+router.post('/:id/calculate', async (req, res, next) => {
   const { formData } = req.body;
   const calculator = await Calculator.findById(req.params.id).exec();
   const resultBlocks = calculator.blocks.filter(block => block.type === 'result');
