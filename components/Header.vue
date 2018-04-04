@@ -14,10 +14,10 @@
               <template slot="button-content">
                 <em>Hello, {{ user.name || user.username }}</em>
               </template>
-              <b-dropdown-item :to="{ name: 'calculators', params: { mine: 'mine' } }">My Calculators</b-dropdown-item>
-              <b-dropdown-item disabled :to="{ name: 'whoknows' }">Logout</b-dropdown-item>
+              <b-dropdown-item :to="{ name: 'calculators', params: { mine: 'mine' } }" disabled>My Calculators</b-dropdown-item>
+              <b-dropdown-item @click="onLogoutClick">Logout</b-dropdown-item>
             </b-nav-item-dropdown>
-            <b-nav-item v-else>Login</b-nav-item>
+            <b-nav-item v-else @click="showLoginModal">Login</b-nav-item>
           </b-navbar-nav>
         </b-collapse>
       </b-container>
@@ -26,9 +26,23 @@
 </template>
 
 <script>
+import axios from '~/plugins/axios';
+
 export default {
-  props: {
-    user: Object
+  computed: {
+    user () {
+      return this.$store.state.user;
+    }
+  },
+  methods: {
+    showLoginModal () {
+      this.$store.dispatch('showLoginModal');
+    },
+    onLogoutClick () {
+      axios.get('/api/auth/logout').then(res => {
+        this.$store.dispatch('clearUser');
+      }).catch(console.error);
+    }
   }
 };
 </script>

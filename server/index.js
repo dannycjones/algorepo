@@ -2,6 +2,7 @@ import express from 'express';
 import { Nuxt, Builder } from 'nuxt';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import passport from 'passport';
 
 import api from './api';
 
@@ -21,9 +22,22 @@ if (isProduction) {
 app.set('port', port);
 
 app.use(bodyParser.json());
+app.use(require('express-session')({
+  secret: process.env['SESSION_SECRET'] || 'please-change-me',
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Import API Routes
 app.use('/api', api);
+
+// Passport config
+var User = require('../models/User');
+passport.use(User.default.createStrategy());
+passport.serializeUser(User.default.serializeUser());
+passport.deserializeUser(User.default.deserializeUser());
 
 // Import and Set Nuxt.js options
 let config = require('../nuxt.config.js');
