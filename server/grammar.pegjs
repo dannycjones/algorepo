@@ -13,7 +13,7 @@
     function resolveSymbol(parser, symbol){
         const flatSymbol = flatten(symbol).join("");
         if (!parser.symbols.hasOwnProperty(flatSymbol)) { throw new Error(`Variable, ${symbol}, not defined`) };
-        return parseFloat(parser.symbols[flatSymbol], 10);
+        return parser.symbols[flatSymbol];
     }
 }
 
@@ -40,13 +40,13 @@ Function "known function"
   = SumFunc / ExpFunc / ProductFunc
   
 SumFunc
-  = "$sum" _ "(" _ list:Variable _ ")" { return list.reduce((acc, val) => acc + val, 0); }
+  = "$sum(" _ list:Variable _ ")" { return list.reduce((acc, val) => acc + val, 0);; }
   
 ProductFunc
-  = "$product" _ "(" _ list:Variable _ ")" { return list.reduce((acc, val) => acc * val, 1); }
+  = "$product(" _ list:Variable _ ")" { return list.reduce((acc, val) => acc * val, 1); }
   
 ExpFunc
-  = "$exp" _ "(" _ val:(Variable / Factor) _ ")" { return Math.exp(val); }
+  = "$exp(" _ val:(Variable / Factor) _ ")" { return Math.exp(val); }
 
 Factor
   = "(" _ expr:Expression _ ")" { return expr; }

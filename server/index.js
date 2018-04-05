@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import passport from 'passport';
 import morgan from 'morgan';
 
+import User from '../models/User';
 import api from './api';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -36,10 +37,9 @@ app.use(passport.session());
 app.use('/api', api);
 
 // Passport config
-var User = require('../models/User');
-passport.use(User.default.createStrategy());
-passport.serializeUser(User.default.serializeUser());
-passport.deserializeUser(User.default.deserializeUser());
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // Import and Set Nuxt.js options
 let config = require('../nuxt.config.js');

@@ -32,15 +32,16 @@ export default {
   },
   data () {
     return {
-      resultBlockValues: {
-        endResult: 12
-      },
+      resultBlockValues: this.calculator.blocks.filter(block => block.type === 'result').map(block => block.id).reduce((acc, id) => {
+        acc[id] = undefined;
+        return acc;
+      }, {}),
       formData: {}
     };
   },
   methods: {
     valueOrPlaceholder (value, placeholder = '-') {
-      return value || placeholder;
+      return value === undefined ? placeholder : value;
     },
     calculate: debounce(function () {
       return axios.post(`/api/calculators/${this.calculator._id}/calculate`, { formData: this.formData })
