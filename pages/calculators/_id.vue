@@ -16,7 +16,7 @@
         <b-card title="Information" :sub-title="calculator.name" tag="section">
           <b-list-group flush>
             <b-list-group-item v-if="calculator.description">{{ calculator.description }}</b-list-group-item>
-            <b-list-group-item v-if="calculator.author">Published by <nuxt-link :to="{ name: 'users-id', params: { id: calculator.author._id } }"></nuxt-link></b-list-group-item>
+            <b-list-group-item v-if="calculator.author">Published by <nuxt-link :to="{ name: 'users-id', params: { id: calculator.author._id } }">{{ calculator.author.name || calculator.author.username }}</nuxt-link></b-list-group-item>
             <b-list-group-item v-b-tooltip.hover :title="fullDateStr(calculator.createdAt)">Published {{ timeSince(calculator.createdAt) }}</b-list-group-item>
             <b-list-group-item v-b-tooltip.hover :title="fullDateStr(calculator.updatedAt)">Last updated {{ timeSince(calculator.updatedAt) }}</b-list-group-item>
           </b-list-group>

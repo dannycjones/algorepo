@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import interpreter from '../interpreter';
 import Calculator from '../../models/Calculator';
+import User from '../../models/User';
 
 const router = Router();
 
@@ -14,11 +15,16 @@ router.get('/', (req, res, next) => {
   });
 });
 
-router.get('/:id', (req, res, next) => {
-  Calculator.findById(req.params.id, (err, calculator) => {
-    if (err) res.sendStatus(404);
-    res.send(calculator);
-  });
+router.get('/:id', async (req, res, next) => {
+  let calculator;
+  try {
+    calculator = await Calculator.findById(req.params.id);
+  } catch (e) {
+    return res.sendStatus(404);
+  }
+  const author = await User.findById(calculator.author);
+  calculator.author = author;
+  res.send(calculator);
 });
 
 router.post('/:id/calculate', async (req, res, next) => {
