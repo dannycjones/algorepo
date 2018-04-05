@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import { debounce } from 'lodash';
+
 import axios from '~/plugins/axios';
 import MultiOptionInput from '~/components/MultiOptionInput.vue';
 
@@ -39,7 +41,16 @@ export default {
   methods: {
     valueOrPlaceholder (value, placeholder = '-') {
       return value || placeholder;
-    }
+    },
+    calculate: debounce(function () {
+      return axios.post(`/api/calculators/${this.calculator._id}/calculate`, { formData: this.formData })
+        .then(res => {
+          Object.entries(res.data.results).forEach(([key, value]) => {
+            this.resultBlockValues[key] = value;
+          });
+        })
+        .catch(console.error);
+    }, 1000)
   },
   components: {
     MultiOptionInput
@@ -47,15 +58,7 @@ export default {
   watch: {
     formData: {
       deep: true,
-      handler () {
-        return axios.post(`/api/calculators/${this.calculator._id}/calculate`, { formData: this.formData })
-          .then(res => {
-            Object.entries(res.data.results).forEach(([key, value]) => {
-              this.resultBlockValues[key] = value;
-            });
-          })
-          .catch(console.error);
-      }
+      handler () { this.calculate(); }
     }
   }
 };

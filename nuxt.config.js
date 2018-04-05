@@ -19,7 +19,7 @@ module.exports = {
     'bootstrap-vue/nuxt'
   ],
   build: {
-    vendor: ['axios'],
+    vendor: ['axios', 'lodash'],
     extend (config, ctx) {
       if (ctx.isClient) {
         config.module.rules.push({
