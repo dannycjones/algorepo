@@ -12,9 +12,10 @@
           <b-navbar-nav class="ml-auto">
             <b-nav-item-dropdown v-if="user" right>
               <template slot="button-content">
-                <em>Hello, {{ user.name || user.username }}</em>
+                {{ user.name || user.username }}
               </template>
               <b-dropdown-item :to="{ name: 'calculators', params: { mine: 'mine' } }" disabled>My Calculators</b-dropdown-item>
+              <b-dropdown-item-divider></b-dropdown-item-divider>
               <b-dropdown-item @click="onLogoutClick">Logout</b-dropdown-item>
             </b-nav-item-dropdown>
             <b-nav-item v-else @click="showLoginModal">Login</b-nav-item>

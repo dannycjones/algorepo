@@ -1,23 +1,28 @@
 <template>
   <section>
     <b-container>
-      <img src="~assets/img/logo.png" alt="Nuxt.js Logo" class="logo" />
       <h1 class="title">
-        CALCULATORS
+        Calculators
       </h1>
-      <b-alert show>Default Alert</b-alert>
-      <ul class="calculators">
-        <li v-for="calculator in calculators" :key="calculator._id" class="calculator">
-          <nuxt-link :to="{ name: 'calculators-id', params: { id: calculator._id }}">
-            {{ calculator.name }}
-          </nuxt-link>
-        </li>
-      </ul>
+      <b-list-group>
+        <b-list-group-item v-for="calculator in calculators" :key="calculator._id" :to="{ name: 'calculators-id', params: { id: calculator._id } }" class="flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{{ calculator.name }}</h5>
+            <small>{{ 'Updated ' + timeSince(calculator.updatedAt) }}</small>
+          </div>
+          <p v-if="calculator.description" class="mb-1">
+            {{ calculator.description }}
+          </p>
+          <small v-if="calculator.author && calculator.author.name">Published by {{ calculator.author.name }}.</small>
+        </b-list-group-item>
+      </b-list-group>
     </b-container>
   </section>
 </template>
 
 <script>
+import moment from 'moment';
+
 import axios from '~/plugins/axios';
 
 export default {
@@ -29,6 +34,11 @@ export default {
     return {
       title: 'calculators'
     };
+  },
+  methods: {
+    timeSince (date) {
+      return moment(date).fromNow();
+    }
   }
 };
 </script>

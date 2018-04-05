@@ -14,9 +14,11 @@
       </b-col>
       <b-col sm="4">
         <b-card title="Information" :sub-title="calculator.name" tag="section">
-           <b-list-group flush>
-            <b-list-group-item v-if="calculator.author"><span class="muted">Authored by </span><nuxt-link :to="{ name: 'users-id', params: { id: calculator.author._id } }"></nuxt-link></b-list-group-item>
-            <b-list-group-item>Published {{new Date(calculator.createdAt).toDateString()}}</b-list-group-item>
+          <b-list-group flush>
+            <b-list-group-item v-if="calculator.description">{{ calculator.description }}</b-list-group-item>
+            <b-list-group-item v-if="calculator.author">Published by <nuxt-link :to="{ name: 'users-id', params: { id: calculator.author._id } }"></nuxt-link></b-list-group-item>
+            <b-list-group-item v-b-tooltip.hover :title="fullDateStr(calculator.createdAt)">Published {{ timeSince(calculator.createdAt) }}</b-list-group-item>
+            <b-list-group-item v-b-tooltip.hover :title="fullDateStr(calculator.updatedAt)">Last updated {{ timeSince(calculator.updatedAt) }}</b-list-group-item>
           </b-list-group>
         </b-card>
       </b-col>
@@ -32,6 +34,8 @@
 </template>
 
 <script>
+import moment from 'moment';
+
 import axios from '~/plugins/axios';
 import CalculatorForm from '~/components/CalculatorForm.vue';
 
@@ -50,6 +54,14 @@ export default {
     return {
       title: `calculator: ${this.calculator.name}`
     };
+  },
+  methods: {
+    timeSince (date) {
+      return moment(date).fromNow();
+    },
+    fullDateStr (date) {
+      return moment(date).toString();
+    }
   },
   components: {
     CalculatorForm
