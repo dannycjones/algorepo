@@ -18,10 +18,13 @@ var Schema = mongoose.Schema;
 // };
 
 const schema = new Schema({
-  name: String,
+  name: {
+    type: String,
+    required: true
+  },
+  description: String,
   blocks: [],
-  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  seeded: { type: Boolean, default: false }
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, {
   timestamps: true
 });

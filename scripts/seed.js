@@ -27,8 +27,7 @@ const calculators = [
     publishDate: new Date(),
     user: {
       username: 'dannycjones'
-    },
-    seeded: true
+    }
   }
 ];
 
