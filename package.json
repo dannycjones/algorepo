@@ -13,7 +13,8 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "db:seed": "babel-node scripts/seed.js",
     "db:drop": "babel-node scripts/drop.js",
-    "db:reset": "yarn run db:drop && yarn run db:seed"
+    "db:reset": "yarn run db:drop && yarn run db:seed",
+    "test": "ava"
   },
   "dependencies": {
     "@nuxtjs/vuetify": "^0.4.1",
@@ -39,6 +40,9 @@
     "vue-particles": "^1.0.9"
   },
   "devDependencies": {
+    "@babel/polyfill": "^7.0.0-beta.44",
+    "@babel/register": "^7.0.0-beta.44",
+    "ava": "^1.0.0-beta.3",
     "babel-eslint": "^7.2.3",
     "backpack-core": "^0.4.1",
     "eslint": "^4.3.0",
@@ -49,6 +53,13 @@
     "eslint-plugin-node": "^5.1.1",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
-    "eslint-plugin-vue": "^4.4.0"
+    "eslint-plugin-vue": "^4.4.0",
+    "jsdom": "^11.7.0"
+  },
+  "ava": {
+    "require": [
+      "@babel/polyfill",
+      "@babel/register"
+    ]
   }
 }
