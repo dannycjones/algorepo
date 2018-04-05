@@ -3,6 +3,7 @@ import { Nuxt, Builder } from 'nuxt';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import passport from 'passport';
+import morgan from 'morgan';
 
 import api from './api';
 
@@ -21,6 +22,7 @@ if (isProduction) {
 
 app.set('port', port);
 
+app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(require('express-session')({
   secret: process.env['SESSION_SECRET'] || 'please-change-me',

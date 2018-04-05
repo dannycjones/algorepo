@@ -48,7 +48,7 @@ export default {
     formData: {
       deep: true,
       handler () {
-        return axios.post(`/api/calculators/${this.calculator.id}/calculate`, { formData: this.formData })
+        return axios.post(`/api/calculators/${this.calculator._id}/calculate`, { formData: this.formData })
           .then(res => {
             Object.entries(res.data.results).forEach(([key, value]) => {
               this.resultBlockValues[key] = value;

@@ -23,7 +23,7 @@ router.get('/:id', (req, res, next) => {
 
 router.post('/:id/calculate', async (req, res, next) => {
   const { formData } = req.body;
-  const calculator = await Calculator.findById(req.params.id).exec();
+  const calculator = await Calculator.findById(req.params.id);
   const resultBlocks = calculator.blocks.filter(block => block.type === 'result');
   const results = {};
 
