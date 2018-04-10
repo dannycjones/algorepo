@@ -28,20 +28,24 @@ router.get('/:id', async (req, res, next) => {
 });
 
 router.post('/:id/calculate', async (req, res, next) => {
-  const { formData } = req.body;
-  const calculator = await Calculator.findById(req.params.id);
-  const resultBlocks = calculator.blocks.filter(block => block.type === 'result');
-  const results = {};
+  try {
+    const { formData } = req.body;
+    const calculator = await Calculator.findById(req.params.id);
+    const resultBlocks = calculator.blocks.filter(block => block.type === 'result');
+    const results = {};
 
-  for (const block of resultBlocks) {
-    const blockResult = interpreter.process(block.content, formData);
-    formData[block.id] = blockResult;
-    if (block.display) {
-      results[block.id] = blockResult;
+    for (const block of resultBlocks) {
+      const blockResult = interpreter.process(block.content, formData);
+      formData[block.id] = blockResult;
+      if (block.display) {
+        results[block.id] = blockResult;
+      }
     }
-  }
 
-  res.json({ results });
+    res.json({ results });
+  } catch (e) {
+    next(e);
+  }
 });
 
 export default router;

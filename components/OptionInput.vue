@@ -9,7 +9,7 @@
 export default {
   props: {
     label: String,
-    value: Object,
+    value: null,
     options: Array,
     displayAs: {
       validator (value) {
