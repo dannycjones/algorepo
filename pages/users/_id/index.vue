@@ -1,21 +1,14 @@
 <template>
-  <b-container class="container">
-    <h1 class="title">
-      Users
-    </h1>
-    <h2 class="info">
-      {{ niceName }}
-    </h2>
-    <b-row>
-      <b-col>
-        <b-card no-body tag="section">
-          <b-list-group flush>
-            <b-list-group-item v-for="key in Object.keys(user)" :key="key">{{ `${key}: ${user[key]}` }}</b-list-group-item>
-          </b-list-group>
-        </b-card>
-      </b-col>
-    </b-row>
-  </b-container>
+  <v-card>
+    <v-card-title><h4>{{ niceName }}</h4></v-card-title>
+    <v-divider></v-divider>
+    <v-list dense>
+      <v-list-tile v-for="key in Object.keys(user)" :key="key">
+        <v-list-tile-content>{{key}}:</v-list-tile-content>
+        <v-list-tile-content class="align-end">{{ user[key] }}</v-list-tile-content>
+      </v-list-tile>
+    </v-list>
+  </v-card>
 </template>
 
 <script>

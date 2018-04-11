@@ -29,7 +29,7 @@ router.get('/:id', async (req, res, next) => {
 
 router.post('/:id/calculate', async (req, res, next) => {
   try {
-    const { formData } = req.body;
+    const { formData, token = null } = req.body;
     const calculator = await Calculator.findById(req.params.id);
     const resultBlocks = calculator.blocks.filter(block => block.type === 'result');
     const results = {};
@@ -42,7 +42,7 @@ router.post('/:id/calculate', async (req, res, next) => {
       }
     }
 
-    res.json({ results });
+    res.json({ results, token });
   } catch (e) {
     next(e);
   }

@@ -1,22 +1,28 @@
 <template>
   <section>
-    <b-container>
-      <h1 class="title">
-        Calculators
-      </h1>
-      <b-list-group>
-        <b-list-group-item v-for="calculator in calculators" :key="calculator._id" :to="{ name: 'calculators-id', params: { id: calculator._id } }" class="flex-column align-items-start">
-          <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">{{ calculator.name }}</h5>
-            <small>{{ 'Updated ' + timeSince(calculator.updatedAt) }}</small>
-          </div>
-          <p v-if="calculator.description" class="mb-1">
-            {{ calculator.description }}
-          </p>
-          <small v-if="calculator.author && calculator.author.name">Published by {{ calculator.author.name }}.</small>
-        </b-list-group-item>
-      </b-list-group>
-    </b-container>
+    <h1 class="title">
+      Calculators
+    </h1>
+    <v-layout row>
+      <v-flex xs12 sm6 offset-sm3>
+        <v-card>
+          <v-list two-line>
+            <template v-for="(calculator, index) in calculators">
+              <v-list-tile nuxt :to="{ name: 'calculators-id', params: { id: calculator._id } }" ripple :key="calculator._id">
+                <v-list-tile-content>
+                  <v-list-tile-title>{{ calculator.name }}</v-list-tile-title>
+                  <v-list-tile-sub-title>{{ calculator.description }}</v-list-tile-sub-title>
+                </v-list-tile-content>
+                <v-list-tile-action>
+                  <v-list-tile-action-text>{{ 'Updated ' + timeSince(calculator.updatedAt) }}</v-list-tile-action-text>
+                </v-list-tile-action>
+              </v-list-tile>
+              <v-divider v-if="index + 1 < calculators.length" :key="index"></v-divider>
+            </template>
+          </v-list>
+        </v-card>
+      </v-flex>
+    </v-layout>
   </section>
 </template>
 

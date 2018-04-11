@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import express from 'express';
 import { Nuxt, Builder } from 'nuxt';
 import bodyParser from 'body-parser';

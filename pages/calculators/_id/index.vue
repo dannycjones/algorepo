@@ -1,36 +1,53 @@
 <template>
-  <b-container class="container">
-    <h1 class="title">
-      Calculators
-    </h1>
-    <h2 class="info">
-      {{ calculator.name }}
-    </h2>
-    <b-row>
-      <b-col>
-        <b-card title="Calculator" sub-title="Calculate some values..." tag="section">
-          <calculator-form :calculator="calculator"></calculator-form>
-        </b-card>
-      </b-col>
-      <b-col sm="4">
-        <b-card title="Information" :sub-title="calculator.name" tag="section">
-          <b-list-group flush>
-            <b-list-group-item v-if="calculator.description">{{ calculator.description }}</b-list-group-item>
-            <b-list-group-item v-if="calculator.author">Published by <nuxt-link :to="{ name: 'users-id', params: { id: calculator.author._id } }">{{ calculator.author.name || calculator.author.username }}</nuxt-link></b-list-group-item>
-            <b-list-group-item v-b-tooltip.hover :title="fullDateStr(calculator.createdAt)">Published {{ timeSince(calculator.createdAt) }}</b-list-group-item>
-            <b-list-group-item v-b-tooltip.hover :title="fullDateStr(calculator.updatedAt)">Last updated {{ timeSince(calculator.updatedAt) }}</b-list-group-item>
-          </b-list-group>
-        </b-card>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col>
-        <nuxt-link tag="b-button" :to="{ name: 'calculators' }">
-          All Calculators
-        </nuxt-link>
-      </b-col>
-    </b-row>
-  </b-container>
+  <div>
+    <h1>Calculators</h1>
+    <h2>{{ calculator.name }}</h2>
+    <v-container grid-list-md text-xs-center>
+      <v-layout row wrap>
+        <v-flex xs12 sm8>
+          <v-card>
+            <v-card-title primary-title>
+              <h3 class="headline mb-0">Calculator</h3>
+              <calculator-form :calculator="calculator"></calculator-form>
+            </v-card-title>
+          </v-card>
+        </v-flex>
+        <v-flex xs12 sm4>
+          <v-card>
+            <v-card-title primary-title>
+              <div>
+                <h3 class="headline mb-0">Information</h3>
+                <v-list>
+                  <v-list-tile v-if="calculator.description">
+                    <v-list-tile-content>{{ calculator.description }}</v-list-tile-content>
+                  </v-list-tile>
+                  <v-list-tile v-if="calculator.author">
+                    <v-list-tile-content>Author:</v-list-tile-content>
+                    <v-list-tile-content class="align-end">{{ calculator.author.name || calculator.author.username }}</v-list-tile-content>
+                  </v-list-tile>
+                  <v-list-tile>
+                    <v-list-tile-content>Published:</v-list-tile-content>
+                    <v-tooltip>
+                      <v-list-tile-content class="align-end" slot="activator">{{ timeSince(calculator.createdAt) }}</v-list-tile-content>
+                      <span>fullDateStr(calculator.createdAt)</span>
+                    </v-tooltip>
+                  </v-list-tile>
+                  <v-list-tile>
+                    <v-list-tile-content>Updated:</v-list-tile-content>
+                    <v-tooltip>
+                      <v-list-tile-content class="align-end" slot="activator">{{ timeSince(calculator.updatedAt) }}</v-list-tile-content>
+                      <span>fullDateStr(calculator.updatedAt)</span>
+                    </v-tooltip>
+                  </v-list-tile>
+                </v-list>
+              </div>
+            </v-card-title>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
+    <v-btn nuxt :to="{ name: 'calculators' }">Back to All Calculators</v-btn>
+  </div>
 </template>
 
 <script>

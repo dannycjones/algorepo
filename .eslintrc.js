@@ -1,18 +1,20 @@
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
   env: {
     browser: true,
     node: true
   },
-  extends: 'standard',
+  extends: 'plugin:vue/essential',
   // required to lint *.vue files
   plugins: [
     'html'
   ],
   // add your custom rules here
   rules: {
-    "semi": ["warn", "always"]
+    'semi': ['warn', 'always']
   },
-  globals: {}
+  globals: {},
+  parserOptions: {
+    parser: 'babel-eslint'
+  }
 }

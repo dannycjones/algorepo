@@ -1,7 +1,7 @@
 <template>
-  <b-form-group :label="label">
-    <b-form-checkbox-group v-if="displayAs === 'checkboxes'" v-model="selected" :options="options" @change="updateValue()"></b-form-checkbox-group>
-  </b-form-group>
+  <div>
+    <v-checkbox v-for="option in options" :label="option.text" v-model="selected" :key="option.text" :disabled="optionsIsEmpty"></v-checkbox>
+  </div>
 </template>
 
 <script>
@@ -17,15 +17,21 @@ export default {
       required: true
     }
   },
-  methods: {
-    updateValue () {
-      this.$emit('input', this.selected);
-    }
-  },
   data () {
     return {
       selected: this.value
     };
+  },
+  watch: {
+    selected () {
+      this.$emit('input', this.selected);
+    }
+  },
+  computed: {
+    optionsIsEmpty () {
+      const options = this.options;
+      return !(Array.isArray(options) && options.length > 0);
+    }
   }
 };
 </script>

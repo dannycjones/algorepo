@@ -16,7 +16,7 @@ module.exports = {
   css: ['~/assets/css/main.css'],
   plugins: [],
   modules: [
-    'bootstrap-vue/nuxt'
+    '@nuxtjs/vuetify'
   ],
   build: {
     vendor: ['axios', 'lodash', 'moment'],

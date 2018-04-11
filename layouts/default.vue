@@ -1,10 +1,12 @@
 <template>
-  <div>
+  <v-app>
     <my-header />
-    <nuxt />
+    <v-container>
+      <nuxt />
+    </v-container>
     <my-footer />
-    <login-modal v-if="loginModalVisible" :visible="loginModalVisible" />
-  </div>
+    <login-modal :visible="loginDialogVisible" />
+  </v-app>
 </template>
 
 <script>
@@ -19,8 +21,8 @@ export default {
     LoginModal
   },
   computed: {
-    loginModalVisible () {
-      return this.$store.state.loginModalVisible;
+    loginDialogVisible () {
+      return this.$store.state.loginDialogVisible;
     }
   }
 };

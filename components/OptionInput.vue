@@ -1,8 +1,8 @@
 <template>
-  <b-form-group :label="label">
-    <b-form-select v-if="displayAs === 'select'" v-model="selected" :options="options" @change="updateValue()"></b-form-select>
-    <b-form-radio-group v-else v-model="selected" :options="options" @change="updateValue()" :buttons="displayAs === 'buttons'" :button-variant="variant" :id="'radioGroup' + this._uid" :name="'radioGroup' + this._uid"></b-form-radio-group>
-  </b-form-group>
+    <v-select v-if="displayAs === 'select'" :items="options" v-model="selected" :label="label" single-line :disabled="optionsIsEmpty"></v-select>
+    <v-radio-group :label="label" v-else-if="displayAs === 'radio'" v-model="selected" row :disabled="optionsIsEmpty">
+      <v-radio v-for="option in options" :key="option.text" :label="option.text" :value="option.value"></v-radio>
+    </v-radio-group>
 </template>
 
 <script>
@@ -23,8 +23,8 @@ export default {
       }
     }
   },
-  methods: {
-    updateValue () {
+  watch: {
+    selected () {
       this.$emit('input', this.selected);
     }
   },
@@ -32,6 +32,12 @@ export default {
     return {
       selected: this.value
     };
+  },
+  computed: {
+    optionsIsEmpty () {
+      const options = this.options;
+      return !(Array.isArray(options) && options.length > 0);
+    }
   }
 };
 </script>

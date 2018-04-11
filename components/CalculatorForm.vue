@@ -1,24 +1,20 @@
 <template>
-  <b-form>
-    <b-container>
-      <b-form-row v-for="block in calculator.blocks" :key="block.id">
-        <b-col v-if="block.type === 'input'">
-          <div v-if="block.content.type === 'options'">
-            <option-input v-if="['select', 'radio', 'buttons'].indexOf(block.content.display) !== -1" :label="block.label" v-model=formData[block.id] :options="getOptions(block.content)" :display-as="block.content.display" variant="primary"></option-input>
-            <multi-option-input v-else :label="block.label" v-model="formData[block.id]" :options="getOptions(block.content)" :display-as="block.content.display"></multi-option-input>
-          </div>
-          <b-form-group v-if="block.content.type === 'text'" :label="block.label">
-            <b-form-input v-model="formData[block.id]" type="text" :placeholder="block.content.placeholder"></b-form-input>
-          </b-form-group>
-        </b-col>
-        <b-col v-else-if="block.type === 'result'">
-          <b-form-group :label="block.label" :description="statusCaption">
-            <b-form-input plaintext :value="valueOrPlaceholder(resultBlockValues[block.id])"></b-form-input>
-          </b-form-group>
-        </b-col>
-      </b-form-row>
-    </b-container>
-  </b-form>
+  <v-form class="calculator-form">
+    <template v-for="block in calculator.blocks">
+      <template v-if="block.type === 'input'">
+        <template v-if="block.content.type === 'options'">
+          <option-input :key="block.id" v-if="['select', 'radio', 'buttons'].indexOf(block.content.display) !== -1" :label="block.label" v-model=formData[block.id] :options="getOptions(block.content)" :display-as="block.content.display" variant="primary"></option-input>
+          <multi-option-input :key="block.id" v-else :label="block.label" v-model="formData[block.id]" :options="getOptions(block.content)" :display-as="block.content.display"></multi-option-input>
+        </template>
+        <template v-else>
+          <v-text-field :key="block.id" :label="block.label" v-model="formData[block.id]"></v-text-field>
+        </template>
+      </template>
+      <template v-else-if="block.type === 'result'">
+        <v-text-field :label="block.label" :value="valueOrPlaceholder(resultBlockValues[block.id])" readonly :hint="statusCaption" persistent-hint :key="block.id" :error="failed"></v-text-field>
+      </template>
+    </template>
+  </v-form>
 </template>
 
 <script>
@@ -29,6 +25,14 @@ import MultiOptionInput from '~/components/MultiOptionInput.vue';
 import OptionInput from '~/components/OptionInput.vue';
 
 const debounceDuration = 1000; // ms
+
+function* basicIdGenerator() {
+  let index = 0;
+  while (index < index + 1)
+    yield index++;
+}
+
+const calcReqIdGen = basicIdGenerator();
 
 export default {
   props: {
@@ -56,17 +60,24 @@ export default {
     onChange () {
       this.failed = false;
       this.dirty = true;
+      console.table(Object.entries(this.formData));
       this.calculate();
     },
     calculate: debounce(function () {
+      const token = calcReqIdGen.next().value;
+      this.failed = false;
       this.fetching = true;
-      return axios.post(`/api/calculators/${this.calculator._id}/calculate`, { formData: this.formData })
+      this.lastToken = token;
+      return axios.post(`/api/calculators/${this.calculator._id}/calculate`, { formData: this.formData, token })
         .then(res => {
-          Object.entries(res.data.results).forEach(([key, value]) => {
-            this.resultBlockValues[key] = value;
-          });
-          this.fetching = false;
-          this.dirty = false;
+          if (this.lastToken === token) {
+            // Only update if this was the last request made.
+            Object.entries(res.data.results).forEach(([key, value]) => {
+              this.resultBlockValues[key] = value;
+            });
+            this.fetching = false;
+            this.dirty = false;
+          }
         })
         .catch((e) => {
           this.failed = true;
@@ -75,7 +86,14 @@ export default {
     }, debounceDuration),
     getOptions (blockContent) {
       const { options, dependencies } = blockContent;
-      return dependencies.reduce((acc, dep) => acc[this.formData[dep]], options);
+      console.log('options', options);
+      if (options == null)
+        return [];
+      return dependencies.reduce((acc, dep) => {
+        if (this.formData[dep] == null)
+          return [];
+        return acc[this.formData[dep]]
+      }, options);
     }
   },
   components: {
@@ -105,3 +123,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.calculator-form {
+  width: 100%;
+}
+</style>

@@ -4,7 +4,7 @@ const createStore = () => {
   return new Vuex.Store({
     state: {
       user: null,
-      loginModalVisible: false
+      loginDialogVisible: false
     },
     mutations: {
       setUser (state, user) {
@@ -13,8 +13,8 @@ const createStore = () => {
       clearUser (state) {
         state.user = null;
       },
-      setLoginModalVisibility (state, visible) {
-        state.loginModalVisible = visible;
+      setLoginDialogVisibility (state, visible) {
+        state.loginDialogVisible = visible;
       }
     },
     actions: {
@@ -25,11 +25,11 @@ const createStore = () => {
           commit('clearUser');
         }
       },
-      loginModalHidden ({ commit }, ctx) {
-        commit('setLoginModalVisibility', false);
+      hideLoginDialog ({ commit }, ctx) {
+        commit('setLoginDialogVisibility', false);
       },
-      showLoginModal ({ commit }, ctx) {
-        commit('setLoginModalVisibility', true);
+      showLoginDialog ({ commit }, ctx) {
+        commit('setLoginDialogVisibility', true);
       },
       setUser ({ commit }, user) {
         commit('setUser', user);
