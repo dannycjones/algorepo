@@ -68,14 +68,14 @@ router.post('/:id/calculate', async (req, res, next) => {
   try {
     const { formData, token = null } = req.body;
     const calculator = await Calculator.findById(req.params.id);
-    const resultAndComparatorBlocks = calculator.blocks.filter(block => block.type === 'result');
+    const resultAndComparatorBlocks = calculator.blocks.filter(block => ['formula', 'conditional'].includes(block.type));
     const data = cloneDeep(formData);
     const values = {};
 
     for (const block of resultAndComparatorBlocks) {
-      if (block.content.formula) {
-        data[block.id] = interpreter.process(block.content.formula, data);
-      } else if (block.content.rules) {
+      if (block.type === 'formula') {
+        data[block.id] = interpreter.process(block.content, data);
+      } else if (block.type === 'conditional') {
         data[block.id] = block.content.rules.reduce(getRuleReducer(data), undefined);
       }
       if (block.display) {

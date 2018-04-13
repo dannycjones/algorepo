@@ -10,7 +10,7 @@
           <v-text-field :key="block.id" :label="block.label" v-model="formData[block.id]"></v-text-field>
         </template>
       </template>
-      <template v-else-if="block.type === 'result'">
+      <template v-else-if="['formula', 'conditional'].includes(block.type)">
         <v-text-field :label="block.label" :value="valueOrPlaceholder(resultBlockValues[block.id])" readonly :hint="statusCaption" persistent-hint :key="block.id" :error="failed"></v-text-field>
       </template>
     </template>
@@ -40,7 +40,7 @@ export default {
   },
   data () {
     return {
-      resultBlockValues: this.calculator.blocks.filter(block => block.type === 'result').map(block => block.id).reduce((acc, id) => {
+      resultBlockValues: this.calculator.blocks.filter(block => ['formula', 'conditional'].includes(block.type)).map(block => block.id).reduce((acc, id) => {
         acc[id] = undefined;
         return acc;
       }, {}),

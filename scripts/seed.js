@@ -14,7 +14,7 @@ const calculators = [
       { id: 'principal', type: 'input', content: { type: 'number', step: 0.01 }, default: 0, label: 'Principal Amount' },
       { id: 'intervalInterestRate', type: 'input', content: { type: 'number', step: 0.01 }, default: 0, label: 'Interval Interest Rate' },
       { id: 'periods', type: 'input', content: { type: 'number', step: 1 }, default: 0, label: 'Periods' },
-      { id: 'finalBalance', type: 'result', content: { formula: 'principal * $power((1 + intervalInterestRate), periods)' }, label: 'Final Balance', display: true }
+      { id: 'finalBalance', type: 'formula', content: 'principal * $power((1 + intervalInterestRate), periods)', label: 'Final Balance', display: true }
     ]
   }
 ];
