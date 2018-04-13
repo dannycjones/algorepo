@@ -6,56 +6,33 @@ import Calculator from '../models/Calculator';
 const uri = process.env.MONGODB_URI || 'mongodb://localhost/main';
 const options = {};
 
-const users = [
-  {
-    name: 'Daniel Carl Jones',
-    username: 'dannycjones'
-  }
-];
-
 const calculators = [
   {
-    id: 0,
-    name: 'Calc 1',
+    name: 'Compound Interest Calculator',
+    description: 'Calculate the final balance of a principal with compound interest',
     blocks: [
-      { id: 'age', type: 'input', content: { type: 'text', min: 0, max: 200 }, value: 0, label: 'Age' },
-      { id: 'weight', type: 'input', content: { type: 'options', display: 'select', options: [{text: '0-10', value: 10}, {text: '11-20', value: 20}] }, label: 'Weight' },
-      { id: 'anotherThing', type: 'input', content: { type: 'options', display: 'buttons', options: [1, 2, 3].map(num => { return { text: 'Option ' + num, value: num }; }) }, label: 'My Set Of Buttons' },
-      { id: 'subTotal', type: 'result', content: '1 + 2', label: 'My Subtotal', display: false },
-      { id: 'endResult', type: 'result', content: '1 + subTotal + age', label: 'My Doubled Total', display: true }
-    ],
-    publishDate: new Date(),
-    user: {
-      username: 'dannycjones'
-    }
+      { id: 'principal', type: 'input', content: { type: 'number', step: 0.01 }, default: 0, label: 'Principal Amount' },
+      { id: 'intervalInterestRate', type: 'input', content: { type: 'number', step: 0.01 }, default: 0, label: 'Interval Interest Rate' },
+      { id: 'periods', type: 'input', content: { type: 'number', step: 1 }, default: 0, label: 'Periods' },
+      { id: 'finalBalance', type: 'result', content: { formula: 'principal * $power((1 + intervalInterestRate), periods)' }, label: 'Final Balance', display: true }
+    ]
   }
 ];
 
 async function seed () {
-  const seedTasks = [];
-
   mongoose.connect(uri, options);
 
   try {
-    seedTasks.push(
-      User.insertMany(users)
-        .then(records => {
-          console.log(`${records.length} users created`);
-        })
-        .catch(console.error)
-        .finally(() => mongoose.connection.close())
-    );
+    const adminUser = await User.register(new User({ name: 'Administrator', username: 'admin' }), 'change_me');
+    console.log(`Inserted administrative user.`);
 
-    seedTasks.push(
-      Calculator.insertMany(calculators)
-        .then(records => {
-          console.log(`${records.length} calculators created`);
-        })
-        .catch(console.error)
-        .finally(() => mongoose.connection.close())
-    );
+    calculators.forEach(calculator => {
+      calculator.author = adminUser._id;
+    });
 
-    await Promise.all(seedTasks);
+    await Calculator.insertMany(calculators);
+
+    console.log(`Inserted ${calculators.length} calculator${calculators.length > 1 ? 's' : ''}.`);
   } catch (e) {
     console.error(e);
   } finally {

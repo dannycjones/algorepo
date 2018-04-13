@@ -10,7 +10,9 @@
     "start": "cross-env NODE_ENV=production node build/main.js",
     "precommit": "npm run lint",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "seed": "babel-node scripts/seed.js"
+    "db:seed": "babel-node scripts/seed.js",
+    "db:drop": "babel-node scripts/drop.js",
+    "db:reset": "yarn run db:drop && yarn run db:seed"
   },
   "dependencies": {
     "@nuxtjs/vuetify": "^0.4.1",
