@@ -4,7 +4,7 @@
       Calculators
     </h1>
     <v-layout row>
-      <v-flex xs12 sm6 offset-sm3>
+      <v-flex xs12 md6 offset-md3>
         <v-card>
           <v-list two-line>
             <template v-for="(calculator, index) in calculators">

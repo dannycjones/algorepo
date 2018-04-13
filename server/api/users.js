@@ -7,7 +7,7 @@ const router = Router();
 
 router.post('/', (req, res, next) => {
   const { name, username, password } = req.body;
-  User.register(new User({ name, username, password }), password, (err, User) => {
+  User.register(new User({ name, username }), password, (err, User) => {
     if (err) {
       res.sendStatus(500);
     }
