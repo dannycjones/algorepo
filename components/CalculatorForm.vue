@@ -60,7 +60,6 @@ export default {
     onChange () {
       this.failed = false;
       this.dirty = true;
-      console.table(Object.entries(this.formData));
       this.calculate();
     },
     calculate: debounce(function () {
@@ -72,7 +71,7 @@ export default {
         .then(res => {
           if (this.lastToken === token) {
             // Only update if this was the last request made.
-            Object.entries(res.data.results).forEach(([key, value]) => {
+            Object.entries(res.data.values).forEach(([key, value]) => {
               this.resultBlockValues[key] = value;
             });
             this.fetching = false;
@@ -86,7 +85,6 @@ export default {
     }, debounceDuration),
     getOptions (blockContent) {
       const { options, dependencies } = blockContent;
-      console.log('options', options);
       if (options == null)
         return [];
       return dependencies.reduce((acc, dep) => {

@@ -17,10 +17,8 @@
             <v-card-title primary-title>
               <div>
                 <h3 class="headline mb-0">Information</h3>
-                <v-list>
-                  <v-list-tile v-if="calculator.description">
-                    <v-list-tile-content>{{ calculator.description }}</v-list-tile-content>
-                  </v-list-tile>
+                <span v-if="calculator.description">{{ calculator.description }}</span>
+                <v-list dense>
                   <v-list-tile v-if="calculator.author">
                     <v-list-tile-content>Author:</v-list-tile-content>
                     <v-list-tile-content class="align-end">{{ calculator.author.name || calculator.author.username }}</v-list-tile-content>
