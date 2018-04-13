@@ -12,8 +12,8 @@
     
     function resolveSymbol(parser, symbol){
         const flatSymbol = flatten(symbol).join("");
-        if (!parser.symbols.hasOwnProperty(flatSymbol)) { throw new Error(`Variable, ${symbol}, not defined`) };
-        return parser.symbols[flatSymbol];
+        if (!parser.symbols.hasOwnProperty(flatSymbol)) { throw new Error(`Variable, ${flatSymbol}, not defined`) };
+        return Number.parseFloat(parser.symbols[flatSymbol]);
     }
 }
 
@@ -37,7 +37,7 @@ Term
     }
     
 Function "known function"
-  = SumFunc / ExpFunc / ProductFunc
+  = SumFunc / ExpFunc / ProductFunc / PowerFunc
   
 SumFunc
   = "$sum(" _ list:Variable _ ")" { return list.reduce((acc, val) => acc + val, 0);; }
@@ -47,6 +47,9 @@ ProductFunc
   
 ExpFunc
   = "$exp(" _ val:(Variable / Factor) _ ")" { return Math.exp(val); }
+
+PowerFunc
+  = "$power(" _ base:(Variable / Factor) _ "," _ power:(Variable / Factor) _ ")" { return Math.pow(base, power); }
 
 Factor
   = "(" _ expr:Expression _ ")" { return expr; }
