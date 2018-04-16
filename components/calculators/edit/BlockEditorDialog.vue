@@ -15,29 +15,6 @@
             <v-select v-model="block.content.dependencies" label="Dependencies" chips multiple :items="availableOptions.dependencies"></v-select>
             <v-card v-if="block.content.dependencies.length > 0">
               <DependencyTabs :block="block" :dependencies="block.content.dependencies" :all-blocks="allBlocks"></DependencyTabs>
-            <!-- <v-select v-for="dep in block.content.dependencies" :key="dep.text" :items="allBlocks.find(b => b.id === dep).content.options.map(o => o.text)" label="Select" single-line></v-select>
-            <v-tabs v-if="block.content.dependencies && block.content.dependencies[0]" v-model="tab" grow>
-              <v-tabs-slider></v-tabs-slider>
-              <v-tab v-for="blockOption in allBlocks.find(b => block.content.dependencies[0] === b.id).content.options" :key="blockOption.text">
-                {{ blockOption.text }}
-              </v-tab>
-              <v-tab-item v-for="blockOption in allBlocks.find(b => block.content.dependencies[0] === b.id).content.options" :key="blockOption.text">
-                <v-data-table :headers="[{ text: 'Label', sortable: false, value: 'text' }, { text: 'Value', sortable: false, value: 'value' }]" :items="block.content.options[blockOption.value]" class="elevation-1" hide-actions>
-                  <template slot="items" slot-scope="props">
-                    <td>
-                      <v-edit-dialog @open="props.item._text = props.item.text; focusEditTextDialog();" @cancel="props.item.text = props.item._text || props.item.text"> {{ props.item.text }}
-                        <v-text-field slot="input" label="Text Label" :value="props.item.text" @change.native="e => props.item.text = e.target.value" counter required ref="editTextDialog"></v-text-field>
-                      </v-edit-dialog>
-                    </td>
-                    <td>
-                      <v-edit-dialog @open="props.item._value = props.item.value; focusEditValueDialog();" @cancel="props.item.value = props.item._value || props.item.value"> {{ props.item.value }}
-                        <v-text-field slot="input" label="Value" :value="props.item.value" v-on:change.native="e => props.item.value = e.target.value" counter required ref="editValueDialog"></v-text-field>
-                      </v-edit-dialog>
-                    </td>
-                  </template>
-                </v-data-table>
-              </v-tab-item>
-            </v-tabs> -->
             </v-card>
           </template>
           <template v-if="block.type === 'formula'">

@@ -21,8 +21,8 @@
 import { debounce } from 'lodash';
 
 import axios from '~/plugins/axios';
-import MultiOptionInput from '~/components/MultiOptionInput.vue';
-import OptionInput from '~/components/OptionInput.vue';
+import MultiOptionInput from '~/components/calculators/view/MultiOptionInput.vue';
+import OptionInput from '~/components/calculators/view/OptionInput.vue';
 
 const debounceDuration = 1000; // ms
 

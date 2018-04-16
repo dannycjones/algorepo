@@ -55,7 +55,6 @@
 import moment from 'moment';
 
 import axios from '~/plugins/axios';
-import CalculatorForm from '~/components/CalculatorForm.vue';
 import BlockEditorDialog from '~/components/calculators/edit/BlockEditorDialog.vue';
 
 export default {
@@ -101,7 +100,6 @@ export default {
     }
   },
   components: {
-    CalculatorForm,
     BlockEditorDialog
   }
 };

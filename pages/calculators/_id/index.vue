@@ -52,7 +52,7 @@
 import moment from 'moment';
 
 import axios from '~/plugins/axios';
-import CalculatorForm from '~/components/CalculatorForm.vue';
+import CalculatorForm from '~/components/calculators/view/CalculatorForm.vue';
 
 export default {
   name: 'id',
