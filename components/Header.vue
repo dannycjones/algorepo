@@ -1,6 +1,6 @@
 <template>
   <header>
-    <v-toolbar>
+    <v-toolbar color="primary" dark>
       <nuxt-link tag="v-toolbar-title" :to="{ name: 'index' }">AlgoRepo</nuxt-link>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
