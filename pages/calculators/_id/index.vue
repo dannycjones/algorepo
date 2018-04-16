@@ -21,7 +21,7 @@
                 <v-list dense>
                   <v-list-tile v-if="calculator.author">
                     <v-list-tile-content>Author:</v-list-tile-content>
-                    <v-list-tile-content class="align-end">{{ calculator.author.name || calculator.author.username }}</v-list-tile-content>
+                    <v-list-tile-content class="align-end"><nuxt-link :to="{ name: 'users-id', params: { id: calculator.author._id } }">{{ calculator.author.name || calculator.author.username }}</nuxt-link></v-list-tile-content>
                   </v-list-tile>
                   <v-list-tile>
                     <v-list-tile-content>Published:</v-list-tile-content>
@@ -40,6 +40,7 @@
                 </v-list>
               </div>
             </v-card-title>
+            <v-btn nuxt :to="{ name: 'calculators-id-edit', params: { id: calculator._id } }">Edit</v-btn>
           </v-card>
         </v-flex>
       </v-layout>

@@ -12,10 +12,19 @@
             <v-radio v-for="blockType in availableOptions.types" :key="blockType" :label="blockType" :value="blockType"></v-radio>
           </v-radio-group>
           <template v-if="block.type === 'input'">
-            <v-select v-model="block.content.dependencies" label="Dependencies" chips multiple :items="availableOptions.dependencies"></v-select>
-            <v-card v-if="block.content.dependencies.length > 0">
-              <DependencyTabs :block="block" :dependencies="block.content.dependencies" :all-blocks="allBlocks"></DependencyTabs>
-            </v-card>
+            <v-select v-model="block.content.type" label="Input Type" :items="availableOptions.inputTypes"></v-select>
+            <template v-if="block.content.type === 'options'">
+              <v-select v-model="block.content.dependencies" label="Dependencies" chips multiple :items="availableOptions.dependencies"></v-select>
+              <v-card v-if="block.content.dependencies.length > 0">
+                <DependencyTabs :block="block" :dependencies="block.content.dependencies" :all-blocks="allBlocks"></DependencyTabs>
+              </v-card>
+            </template>
+            <template v-else-if="block.content.type === 'number'">
+              <v-text-field v-model="block.content.step" label="Step" required disabled></v-text-field>
+              <v-text-field v-model="block.content.min" label="Minimum" disabled></v-text-field>
+              <v-text-field v-model="block.content.max" label="Maximum" disabled></v-text-field>
+              <v-text-field v-model="block.content.default" label="Default" disabled></v-text-field>
+            </template>
           </template>
           <template v-if="block.type === 'formula'">
             <v-text-field v-model="block.content" label="Formula" required hint="Details about the expressions and functions can be found in the FAQ."></v-text-field>
@@ -59,6 +68,7 @@ export default {
       block: _.cloneDeep(this.blockToEdit),
       availableOptions: {
         types: ['input', 'formula', 'conditional'],
+        inputTypes: ['options', 'number'],
         dependencies: this.allBlocks.map(b => b.id)
       },
       tab: 0

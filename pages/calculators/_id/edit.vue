@@ -4,10 +4,17 @@
       <v-toolbar card prominent>
         <v-toolbar-title>{{ calculator.name }}</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn @click="onSaveClick" icon>
+
+        <v-tooltip bottom>
+          <v-btn slot="activator" nuxt :to="{ name: 'calculators-id', params: { id: calculator._id } }" icon :disabled="saving || dirty">
+          <v-icon>pageview</v-icon>
+        </v-btn>
+          <span>View Calculator</span>
+        </v-tooltip>
+        <v-btn @click="onSaveClick" :loading="saving" :disabled="saving || !dirty" icon>
           <v-icon>save</v-icon>
         </v-btn>
-        <v-btn @click="onDeleteClick" icon>
+        <v-btn @click="onDeleteClick" icon disabled>
           <v-icon color="red">delete</v-icon>
         </v-btn>
       </v-toolbar>
@@ -64,7 +71,9 @@ export default {
         index: -1,
         visible: false
       },
-      saving: false
+      saving: false,
+      deleting: false,
+      dirty: false
     };
 
     return axios.get('/api/calculators/' + params.id)
@@ -82,7 +91,8 @@ export default {
   },
   methods: {
     onBlockEditorClose (block) {
-      this.calculator.blocks[this.blockEditor.index] = block;
+      // Vue.JS can't watch direct replacements via index
+      this.calculator.blocks.splice(this.blockEditor.index, 1, block);
     },
     openBlockEditor (index) {
       this.blockEditor.visible = true;
@@ -98,11 +108,24 @@ export default {
       }
     },
     onSaveClick () {
+      this.dirty = false;
       this.saving = true;
-      axios.put('/api/calculators/' + this.calculator._id, { calculator: this.calculator });
+      axios.put('/api/calculators/' + this.calculator._id, { calculator: this.calculator }).then(res => {
+        console.log('NICE, RESPONSE', res);
+        this.saving = false;
+      });
     },
     onDeleteClick () {
+      this.deleting = true;
       window.alert('Not implemented');
+    }
+  },
+  watch: {
+    calculator: {
+      deep: true,
+      handler () {
+        this.dirty = true;
+      }
     }
   },
   computed: {

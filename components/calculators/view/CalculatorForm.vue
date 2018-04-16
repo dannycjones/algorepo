@@ -7,7 +7,7 @@
           <multi-option-input :key="block.id" v-else :label="block.label" v-model="formData[block.id]" :options="getOptions(block.content)" :display-as="block.content.display"></multi-option-input>
         </template>
         <template v-else>
-          <v-text-field :key="block.id" :label="block.label" v-model="formData[block.id]"></v-text-field>
+          <v-text-field v-bind="block.content" :key="block.id" :label="block.label" v-model="formData[block.id]"></v-text-field>
         </template>
       </template>
       <template v-else-if="['formula', 'conditional'].includes(block.type)">
