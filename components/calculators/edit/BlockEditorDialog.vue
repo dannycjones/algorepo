@@ -88,7 +88,7 @@ export default {
       this.visible = false;
     },
     onBlockEditorCloseBtn () {
-      // this.calculator.blocks[this.index] = this.block;
+      this.$emit('close', this.block);
       this.closeBlockEditor();
     },
     focusEditTextDialog () {

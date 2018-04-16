@@ -4,10 +4,10 @@
       <v-toolbar card prominent>
         <v-toolbar-title>{{ calculator.name }}</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn icon>
+        <v-btn @click="onSaveClick" icon>
           <v-icon>save</v-icon>
         </v-btn>
-        <v-btn icon>
+        <v-btn @click="onDeleteClick" icon>
           <v-icon color="red">delete</v-icon>
         </v-btn>
       </v-toolbar>
@@ -47,7 +47,7 @@
         </v-form>
       </v-card-text>
     </v-card>
-    <block-editor-dialog v-model="blockEditor.visible" v-if="blockEditor.index >= 0" :block-to-edit="calculator.blocks[blockEditor.index]" :all-blocks="calculator.blocks"></block-editor-dialog>
+    <block-editor-dialog @close="onBlockEditorClose" v-model="blockEditor.visible" v-if="blockEditor.index >= 0" :block-to-edit="calculator.blocks[blockEditor.index]" :all-blocks="calculator.blocks"></block-editor-dialog>
   </div>
 </template>
 
@@ -63,7 +63,8 @@ export default {
       blockEditor: {
         index: -1,
         visible: false
-      }
+      },
+      saving: false
     };
 
     return axios.get('/api/calculators/' + params.id)
@@ -80,6 +81,9 @@ export default {
     };
   },
   methods: {
+    onBlockEditorClose (block) {
+      this.calculator.blocks[this.blockEditor.index] = block;
+    },
     openBlockEditor (index) {
       this.blockEditor.visible = true;
       this.blockEditor.index = index;
@@ -92,6 +96,13 @@ export default {
         this.calculator.blocks.splice(initialIndex, 1);
         this.calculator.blocks.splice(newIndex, 0, block);
       }
+    },
+    onSaveClick () {
+      this.saving = true;
+      axios.put('/api/calculators/' + this.calculator._id, { calculator: this.calculator });
+    },
+    onDeleteClick () {
+      window.alert('Not implemented');
     }
   },
   computed: {

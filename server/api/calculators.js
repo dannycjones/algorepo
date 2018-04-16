@@ -64,6 +64,17 @@ router.get('/:id', async (req, res, next) => {
   res.send(calculator);
 });
 
+router.put('/:id', async (req, res, next) => {
+  const { calculator } = req.body;
+  if (calculator == null) {
+    next('No calculator sent');
+  }
+  delete calculator._id;
+  
+  await Calculator.findByIdAndUpdate(req.params.id, { $set: calculator }).then(console.log).catch(console.error);
+  res.sendStatus(200);
+});
+
 router.post('/:id/calculate', async (req, res, next) => {
   try {
     const { formData, token = null } = req.body;
