@@ -16,7 +16,7 @@
             <template v-if="block.content.type === 'options'">
               <v-select v-model="block.content.dependencies" label="Dependencies" chips multiple :items="availableOptions.dependencies"></v-select>
               <v-card v-if="block.content.dependencies.length > 0">
-                <DependencyTabs :block="block" :dependencies="block.content.dependencies" :all-blocks="allBlocks"></DependencyTabs>
+                <DependencyTabs :dependencies="block.content.dependencies"></DependencyTabs>
               </v-card>
             </template>
             <template v-else-if="block.content.type === 'number'">
@@ -31,12 +31,13 @@
           </template>
           <template v-if="block.type === 'conditional'">
             <v-select v-model="block.content.dependencies" label="Dependencies" chips multiple :items="availableOptions.dependencies"></v-select>
+            <rules-panel :rules="block.content.rules"></rules-panel>
           </template>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="red" flat @click.native="closeBlockEditor">Cancel</v-btn>
-          <v-btn color="blue" flat @click.native="onBlockEditorCloseBtn">Close</v-btn>
+          <v-btn color="red" flat @click.native="onCancelBtn">Cancel</v-btn>
+          <v-btn color="blue" flat @click.native="onCloseBtn">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -47,59 +48,44 @@
 import _ from 'lodash';
 
 import DependencyTabs from './DependencyTabs.vue';
+import RulesPanel from './RulesPanel.vue';
 
 export default {
-  props: {
-    blockToEdit: {
-      type: Object,
-      required: true
-    },
-    allBlocks: {
-      type: Array,
-      required: true
-    },
-    value: {
-      type: Boolean,
-      required: true
-    }
-  },
   data () {
+    const { calculator } = this.$store.state.calculators.editor;
     return {
-      block: _.cloneDeep(this.blockToEdit),
       availableOptions: {
         types: ['input', 'formula', 'conditional'],
         inputTypes: ['options', 'number'],
-        dependencies: this.allBlocks.map(b => b.id)
-      },
-      tab: 0
+        dependencies: calculator.blocks.map(b => b.id)
+      }
     }
   },
   computed: {
     visible: {
       get () {
-        return this.value;
+        return this.$store.state.calculators.editor.blockEditor.visible;
       },
       set (value) {
-        this.$emit('input', value);
+        this.$store.dispatch('calculators/editor/setBlockEditorVisibility', value);
+      }
+    },
+    block: {
+      get () {
+        return _.cloneDeep(this.$store.state.calculators.editor.blockEditor.block);
+      },
+      set (val) {
+        this.$store.dispatch('calculators/editor/updateBlock', { val });
       }
     }
   },
-  components: { DependencyTabs },
-  watch: {
-    blockToEdit: {
-      handler (newValue) {
-        this.block = _.cloneDeep(newValue);
-      },
-      deep: true
-    }
-  },
+  components: { DependencyTabs, RulesPanel },
   methods: {
-    closeBlockEditor () {
-      this.visible = false;
+    onCancelBtn () {
+      this.$store.dispatch('calculators/editor/closeBlockEditor', { save: false });
     },
-    onBlockEditorCloseBtn () {
-      this.$emit('close', this.block);
-      this.closeBlockEditor();
+    onCloseBtn () {
+      this.$store.dispatch('calculators/editor/closeBlockEditor', { save: true });
     },
     focusEditTextDialog () {
       this.$refs.editTextDialog.focus();

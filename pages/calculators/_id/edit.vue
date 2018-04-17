@@ -4,7 +4,6 @@
       <v-toolbar card prominent>
         <v-toolbar-title>{{ calculator.name }}</v-toolbar-title>
         <v-spacer></v-spacer>
-
         <v-tooltip bottom>
           <v-btn slot="activator" nuxt :to="{ name: 'calculators-id', params: { id: calculator._id } }" icon :disabled="saving || dirty">
           <v-icon>pageview</v-icon>
@@ -40,8 +39,8 @@
                         <v-list-tile-sub-title>{{ block.type }}</v-list-tile-sub-title>
                       </v-list-tile-content>
                       <v-list-tile-action>
-                        <v-icon :color="`grey ${index <= 0 ? 'lighten-3' : ''}`" @click.stop="moveBlockPos(index, 'up')">arrow_upward</v-icon>
-                        <v-icon :color="`grey ${index >= calculator.blocks.length - 1 ? 'lighten-3' : ''}`" @click.stop="moveBlockPos(index, 'down')">arrow_downward</v-icon>
+                        <v-icon :color="`grey ${index <= 0 ? 'lighten-3' : ''}`" @click.stop="onUpClick(index)">arrow_upward</v-icon>
+                        <v-icon :color="`grey ${index >= calculator.blocks.length - 1 ? 'lighten-3' : ''}`" @click.stop="onDownClick(index)">arrow_downward</v-icon>
                       </v-list-tile-action>
                     </v-list-tile>
                     <v-divider v-if="index + 1 < calculator.blocks.length" :key="index"></v-divider>
@@ -54,7 +53,7 @@
         </v-form>
       </v-card-text>
     </v-card>
-    <block-editor-dialog @close="onBlockEditorClose" v-model="blockEditor.visible" v-if="blockEditor.index >= 0" :block-to-edit="calculator.blocks[blockEditor.index]" :all-blocks="calculator.blocks"></block-editor-dialog>
+    <block-editor-dialog @close="onBlockEditorClose" v-if="blockEditor.index >= 0"></block-editor-dialog>
   </div>
 </template>
 
@@ -65,20 +64,18 @@ import axios from '~/plugins/axios';
 import BlockEditorDialog from '~/components/calculators/edit/BlockEditorDialog.vue';
 
 export default {
-  asyncData ({ params, error }) {
-    const initialData = {
-      blockEditor: {
-        index: -1,
-        visible: false
-      },
+  data () {
+    return {
+      blockEditorVisible: false,
       saving: false,
       deleting: false,
       dirty: false
     };
-
+  },
+  fetch ({ store, params }) {
     return axios.get('/api/calculators/' + params.id)
       .then((res) => {
-        return { calculator: res.data, ...initialData };
+        return store.dispatch('calculators/editor/setCalculator', { calculator: res.data });
       })
       .catch((e) => {
         error({ statusCode: 404, message: 'Calculator not found' });
@@ -86,7 +83,7 @@ export default {
   },
   head () {
     return {
-      title: `Edit Calculator: ${this.calculator.name}`
+      // title: `Edit Calculator: ${this.calculator.name}`
     };
   },
   methods: {
@@ -94,30 +91,21 @@ export default {
       // Vue.JS can't watch direct replacements via index
       this.calculator.blocks.splice(this.blockEditor.index, 1, block);
     },
-    openBlockEditor (index) {
-      this.blockEditor.visible = true;
-      this.blockEditor.index = index;
+    openBlockEditor (blockIndex) {
+      this.$store.dispatch('calculators/editor/openBlockInEditor', { blockIndex });
+      this.blockEditorVisible = true;
     },
-    moveBlockPos (initialIndex, direction) {
-      const block = this.calculator.blocks[initialIndex];
-      const delta = direction === 'up' ? -1 : 1;
-      const newIndex = initialIndex + delta;
-      if (newIndex >= 0 && newIndex < this.calculator.blocks.length) {
-        this.calculator.blocks.splice(initialIndex, 1);
-        this.calculator.blocks.splice(newIndex, 0, block);
-      }
+    onUpClick (blockIndex) {
+      this.$store.dispatch('moveBlockUp', { blockIndex });
+    },
+    onDownClick (blockIndex) {
+      this.$store.dispatch('moveBlockDown', { blockIndex });
     },
     onSaveClick () {
-      this.dirty = false;
-      this.saving = true;
-      axios.put('/api/calculators/' + this.calculator._id, { calculator: this.calculator }).then(res => {
-        console.log('NICE, RESPONSE', res);
-        this.saving = false;
-      });
+      this.$store.dispatch('save');
     },
     onDeleteClick () {
-      this.deleting = true;
-      window.alert('Not implemented');
+      this.$store.dispatch('delete');
     }
   },
   watch: {
@@ -130,7 +118,13 @@ export default {
   },
   computed: {
     blockIds () {
-      return this.calculator.blocks.map(block => block.id);
+      return this.$store.state.calculators.editor.calculator.blocks.map(block => block.id);
+    },
+    calculator () {
+      return this.$store.state.calculators.editor.calculator;
+    },
+    blockEditor () {
+      return this.$store.state.calculators.editor.blockEditor;
     }
   },
   components: {
