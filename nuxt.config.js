@@ -1,13 +1,9 @@
-// const colors = require('vuetify/es5/util/colors');
-import colors from 'vuetify/es5/util/colors';
+const colors = require('vuetify/es5/util/colors').default;
 
 const primary = colors.cyan.darken3;
 const secondary = colors.cyan.lighten2;
 
 module.exports = {
-  /*
-  ** Headers of the page
-  */
   head: {
     title: 'starter',
     meta: [
