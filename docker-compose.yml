@@ -1,6 +1,12 @@
 version: '2'
 
 services:
+  web:
+    build: .
+    ports:
+      - "3002:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongo/main
   mongo:
     image: mongo:3.6
     ports:

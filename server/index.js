@@ -11,8 +11,12 @@ import api from './api';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+const defaultHost = isProduction ? '0.0.0.0' : '127.0.0.1';
+
+console.log('production', isProduction, 'host', defaultHost);
+
 const app = express();
-const host = process.env.HOST || '127.0.0.1';
+const host = process.env.HOST || defaultHost;
 const port = process.env.PORT || 3000;
 
 app.set('port', port);
