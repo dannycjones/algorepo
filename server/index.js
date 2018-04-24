@@ -15,13 +15,6 @@ const app = express();
 const host = process.env.HOST || '127.0.0.1';
 const port = process.env.PORT || 3000;
 
-if (isProduction) {
-  mongoose.connect(process.env.MONGODB_URI);
-} else {
-  mongoose.connect('mongodb://localhost/main');
-  mongoose.set('debug', true);
-}
-
 app.set('port', port);
 
 app.use(morgan('dev'));
@@ -59,5 +52,16 @@ if (config.dev) {
 app.use(nuxt.render);
 
 // Listen the server
-app.listen(port, host);
-console.log('Server listening on ' + host + ':' + port); // eslint-disable-line no-console
+app.on('ready', function() { 
+  app.listen(port, host);
+  console.log('Server listening on ' + host + ':' + port);
+}); 
+
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/main');
+mongoose.connection.once('open', () => {
+  console.log('Database connected.');
+  if (!isProduction) {
+    mongoose.set('debug', true);
+  } 
+  app.emit('ready'); 
+});
