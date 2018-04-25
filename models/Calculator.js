@@ -22,7 +22,11 @@ const ruleSchema = new Schema({
 
 const contentSchema = new Schema({
   rules: [ruleSchema],
-  formula: String
+  formula: String,
+  dependencies: [String],
+  type: String,
+  display: String,
+  options: {}
 });
 
 const blockSchema = new Schema({
