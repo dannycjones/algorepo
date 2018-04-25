@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import morgan from 'morgan';
+import basicAuth from 'basic-auth';
 
 import User from '../models/User';
 import api from './api';
@@ -12,8 +13,6 @@ import api from './api';
 const isProduction = process.env.NODE_ENV === 'production';
 
 const defaultHost = isProduction ? '0.0.0.0' : '127.0.0.1';
-
-console.log('production', isProduction, 'host', defaultHost);
 
 const app = express();
 const host = process.env.HOST || defaultHost;
@@ -30,6 +29,29 @@ app.use(require('express-session')({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+if (process.env.BASIC_AUTH_USER && process.env.BASIC_AUTH_PASSWORD) {
+  function check (name, pass) {
+    const validName = process.env.BASIC_AUTH_USER === name;
+    const validPass = process.env.BASIC_AUTH_PASSWORD === pass;
+  
+    return validName && validPass;
+  }
+
+  console.log('Basic Auth enabled.');
+  app.use((req, res, next) => {
+    let credentials = basicAuth(req);
+    // Check credentials
+    // The "check" function will typically be against your user store
+    if (!credentials || !check(credentials.name, credentials.pass)) {
+      res.statusCode = 401;
+      res.setHeader('WWW-Authenticate', 'Basic realm="example"');
+      res.end('Access denied');
+    } else {
+      next();
+    }
+  });
+}
 
 // Import API Routes
 app.use('/api', api);
