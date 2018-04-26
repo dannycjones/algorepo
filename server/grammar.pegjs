@@ -13,7 +13,13 @@
     function resolveSymbol(parser, symbol){
         const flatSymbol = flatten(symbol).join("");
         if (!parser.symbols.hasOwnProperty(flatSymbol)) { throw new Error(`Variable, ${flatSymbol}, not defined`) };
-        return Number.parseFloat(parser.symbols[flatSymbol]);
+
+        let value = parser.symbols[flatSymbol];
+        if (Array.isArray(value)) {
+          return value.map(Number.parseFloat);
+        } else {
+          return Number.parseFloat(value);
+        }
     }
 }
 
@@ -29,7 +35,7 @@ Expression
     }
 
 Term
-  = head:(Function / Factor) tail:(_ ("*" / "/") _ (Function / Factor))* {
+  = head:Factor tail:(_ ("*" / "/") _ Factor)* {
       return tail.reduce(function(result, element) {
         if (element[1] === "*") { return result * element[3]; }
         if (element[1] === "/") { return result / element[3]; }
@@ -37,7 +43,10 @@ Term
     }
     
 Function "known function"
-  = SumFunc / ExpFunc / ProductFunc / PowerFunc
+  = SumFunc / ExpFunc / ProductFunc / PowerFunc / LogBFunc / LogFunc
+
+Constant "known constant"
+  = PiConst / EConst
   
 SumFunc
   = "$sum(" _ list:Variable _ ")" { return list.reduce((acc, val) => acc + val, 0);; }
@@ -46,14 +55,26 @@ ProductFunc
   = "$product(" _ list:Variable _ ")" { return list.reduce((acc, val) => acc * val, 1); }
   
 ExpFunc
-  = "$exp(" _ val:(Variable / Factor) _ ")" { return Math.exp(val); }
+  = "$exp(" _ val:(Factor) _ ")" { return Math.exp(val); }
 
 PowerFunc
-  = "$power(" _ base:(Variable / Factor) _ "," _ power:(Variable / Factor) _ ")" { return Math.pow(base, power); }
+  = "$power(" _ base:(Factor) _ "," _ power:(Factor) _ ")" { return Math.pow(base, power); }
+
+LogBFunc
+  = "$logb(" _ base:(Factor) _ "," _ val:(Factor) _ ")" { return Math.log(val) / Math.log(base); }
+
+LogFunc
+  = "$log("_ val:(Factor) _ ")" { return Math.log(val); }
+
+PiConst
+  = "$pi" { return Math.PI; }
+
+EConst
+  = "$e" { return Math.E; }
 
 Factor
   = "(" _ expr:Expression _ ")" { return expr; }
-  / Float / Integer / Variable
+  / Float / Integer / Variable / Function / Constant
 
 Variable "variable"
   = _ name:[A-z_]+ { return resolveSymbol(thisParser, name); }
