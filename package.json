@@ -8,7 +8,6 @@
     "dev": "backpack dev",
     "build": "nuxt build && backpack build",
     "start": "cross-env NODE_ENV=production node build/main.js",
-    "precommit": "npm run lint",
     "heroku-postbuild": "npm run build",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "db:seed": "babel-node scripts/seed.js",
@@ -54,6 +53,7 @@
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
     "eslint-plugin-vue": "^4.4.0",
+    "husky": "^1.0.0-rc.2",
     "jsdom": "^11.7.0"
   },
   "ava": {
@@ -61,5 +61,10 @@
       "@babel/polyfill",
       "@babel/register"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn run lint && yarn test"
+    }
   }
 }
