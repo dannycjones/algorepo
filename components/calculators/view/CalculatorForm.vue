@@ -6,13 +6,9 @@
           <option-input :key="block.id" v-if="['select', 'radio', 'buttons'].indexOf(block.content.display) !== -1" :label="block.label" v-model=formData[block.id] :options="getOptions(block.content)" :display-as="block.content.display" variant="primary"></option-input>
           <multi-option-input :key="block.id" v-else :label="block.label" v-model="formData[block.id]" :options="getOptions(block.content)" :display-as="block.content.display"></multi-option-input>
         </template>
-        <template v-else>
-          <v-text-field v-bind="block.content" :key="block.id" :label="block.label" v-model="formData[block.id]"></v-text-field>
-        </template>
+        <v-text-field :key="block.id" v-else v-bind="block.content" :label="block.label" v-model="formData[block.id]"></v-text-field>
       </template>
-      <template v-else-if="['formula', 'conditional'].includes(block.type)">
-        <v-text-field :label="block.label" :value="valueOrPlaceholder(resultBlockValues[block.id])" readonly :hint="statusCaption" persistent-hint :key="block.id" :error="failed"></v-text-field>
-      </template>
+      <v-text-field :key="block.id" v-else-if="['formula', 'conditional'].includes(block.type)" :label="block.label" :value="valueOrPlaceholder(resultBlockValues[block.id])" readonly :hint="statusCaption" persistent-hint :error="failed"></v-text-field>
     </template>
   </v-form>
 </template>

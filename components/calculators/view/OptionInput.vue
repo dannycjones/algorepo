@@ -1,8 +1,15 @@
 <template>
-    <v-select v-if="displayAs === 'select'" :items="options" v-model="selected" :label="label" single-line :disabled="optionsIsEmpty"></v-select>
-    <v-radio-group :label="label" v-else-if="displayAs === 'radio'" v-model="selected" row :disabled="optionsIsEmpty">
-      <v-radio v-for="option in options" :key="option.text" :label="option.text" :value="option.value"></v-radio>
-    </v-radio-group>
+  <v-layout row wrap v-if="displayAs === 'select'">
+      <v-flex sm4 xs12>
+        <v-subheader>{{ label }}</v-subheader>
+      </v-flex>
+      <v-flex sm8 xs12>
+        <v-select :items="options" v-model="selected" :label="label" single-line :disabled="optionsIsEmpty"></v-select>
+      </v-flex>
+  </v-layout>
+  <v-radio-group v-else-if="displayAs === 'radio'" :label="label" v-model="selected" row :disabled="optionsIsEmpty">
+    <v-radio v-for="option in options" :key="option.text" :label="option.text" :value="option.value"></v-radio>
+  </v-radio-group>
 </template>
 
 <script>
