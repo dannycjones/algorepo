@@ -44,7 +44,7 @@ export const mutations = {
   updateBlock (state, block) {
     state.blockEditor.block = block;
   },
-  moveBlock (state, blockIndex, delta) {
+  moveBlock (state, { blockIndex, delta }) {
     const block = state.calculator.blocks[blockIndex];
     const newIndex = blockIndex + delta;
     if (newIndex >= 0 && newIndex < state.calculator.blocks.length) {
@@ -62,22 +62,22 @@ export const actions = {
     commit('setCalculator', calculator);
   },
   save ({ commit, state }, payload) {
-    commit('saving');
+    commit('saving', {});
     axios.put('/api/calculators/' + state.calculator._id, { calculator: state.calculator }).then(res => {
-      commit('saved');
+      commit('saved', {});
     });
   },
   delete ({ commit }, payload) {
     commit('deleting');
-    // commit('deleting');
+    // commit('deleting', {});
     window.alert('Not implemented');
-    // commit('deleted');
+    // commit('deleted', {});
   },
   moveBlockUp ({ commit }, { blockIndex }) {
-    commit('moveBlock', blockIndex, -1);
+    commit('moveBlock', { blockIndex, delta: -1 });
   },
   moveBlockDown ({ commit }, { blockIndex }) {
-    commit('moveBlock', blockIndex, +1);
+    commit('moveBlock', { blockIndex, delta: +1 });
   },
   openBlockInEditor ({ commit, state }, { blockIndex }) {
     commit('setBlockEditorVisibility', true);

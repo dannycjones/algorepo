@@ -20,6 +20,8 @@ function compare(comparator, input, value) {
       return inputStr >= value;
     case "EQUAL":
       return inputStr === value;
+    case "NOT_EQUAL":
+      return inputStr === value;
     throw new Error('Unexpected comparator encountered: ' + comparator);
   }
   return false;
