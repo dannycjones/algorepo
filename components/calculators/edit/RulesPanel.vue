@@ -1,10 +1,10 @@
 <template>
-  <v-container class="">
+  <div>
     <v-expansion-panel popout>
       <Rule v-for="(rule, index) in rules" :rule="rule" :index="index" :key="index"></Rule>
     </v-expansion-panel>
     <v-btn @click="addNewRule">Add New Rule</v-btn>
-  </v-container>
+  </div>
 </template>
 
 <script>
