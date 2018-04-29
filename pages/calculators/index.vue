@@ -23,6 +23,7 @@
         </v-card>
       </v-flex>
     </v-layout>
+    <v-btn @click="onNewClick" color="primary">New Calculator</v-btn>
   </section>
 </template>
 
@@ -44,6 +45,18 @@ export default {
   methods: {
     timeSince (date) {
       return moment(date).fromNow();
+    },
+    async onNewClick () {
+      const calculator = {
+        name: 'My New Calculator',
+        description: '',
+        blocks: []
+      }
+
+      const { data: { calculator: newCalc } } = await axios.post('/api/calculators', { calculator });
+      console.log('newCalc', newCalc);
+
+      this.$router.push({ name: 'calculators-id', params: { id: newCalc._id } });
     }
   }
 };

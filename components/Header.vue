@@ -37,11 +37,11 @@ export default {
   },
   methods: {
     showLoginDialog () {
-      this.$store.dispatch('showLoginDialog');
+      this.$store.commit('showLoginDialog');
     },
     onLogoutClick () {
       axios.get('/api/auth/logout').then(res => {
-        this.$store.dispatch('clearUser');
+        this.$store.commit('clearUser');
       }).catch(console.error);
     }
   }

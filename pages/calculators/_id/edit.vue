@@ -1,5 +1,6 @@
 <template>
   <div v-if="calculator">
+    <v-alert type="warning" :value="true">This system is very unstable. Save work regularly to avoid losing progress.</v-alert>
     <v-card>
       <v-toolbar card prominent>
         <v-toolbar-title>{{ calculator.name }}</v-toolbar-title>
@@ -23,10 +24,10 @@
           <v-container grid-list-xl fluid>
             <v-layout wrap>
               <v-flex xs12>
-                <v-text-field label="Name" v-model="calculator.name" required></v-text-field>
+                <v-text-field label="Name" :value="calculator.name" @input="updateName" required></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-text-field label="Description" v-model="calculator.description" required multi-line></v-text-field>
+                <v-text-field label="Description" :value="calculator.description" @input="updateDescription" required multi-line></v-text-field>
               </v-flex>
               <v-flex xs12>
                 <span class="subheadingfont">Blocks</span>
@@ -35,7 +36,7 @@
                     <template v-for="(block, index) in calculator.blocks">
                       <v-list-tile avatar ripple :key="block.id" @click.stop="openBlockEditor(index)">
                         <v-list-tile-content>
-                          <v-list-tile-title>{{ block.label }}</v-list-tile-title>
+                          <v-list-tile-title>{{ block.label || 'No label set...' }}</v-list-tile-title>
                           <v-list-tile-sub-title class="text--primary">{{ block.id }}</v-list-tile-sub-title>
                           <v-list-tile-sub-title>{{ block.type }}</v-list-tile-sub-title>
                         </v-list-tile-content>
@@ -48,36 +49,32 @@
                     </template>
                   </v-list>
                 </v-card>
+                <v-btn @click="onAddBlock('formula')">Add Formula Block</v-btn>
+                <v-btn @click="onAddBlock('input')">Add Input Block</v-btn>
+                <v-btn @click="onAddBlock('conditional')">Add Conditional Block</v-btn>
               </v-flex>
             </v-layout>
           </v-container>
         </v-form>
       </v-card-text>
     </v-card>
+    <BlockEditorDialog :block="calculator.blocks[blockEditor.index]"></BlockEditorDialog>
   </div>
 </template>
 
 <script>
 import moment from 'moment';
+import { mapState } from 'vuex';
 
 import axios from '~/plugins/axios';
-// import BlockEditorDialog from '~/components/calculators/edit/BlockEditorDialog.vue';
+import BlockEditorDialog from '~/components/calculators/edit/BlockEditorDialog.vue';
 
 export default {
-  data () {
-    return {
-      // blockEditorVisible: [],
-      saving: false,
-      deleting: false,
-      dirty: false
-    };
-  },
   fetch ({ store, params, error }) {
     return axios.get('/api/calculators/' + params.id)
       .then((res) => {
         const calculator = res.data;
-        this.blockEditorVisible = calculator.blocks.map(() => false);
-        return store.dispatch('calculators/editor/setCalculator', { calculator });
+        return store.commit('calculators/editor/setCalculator', { calculator });
       })
       .catch((e) => {
         error({ statusCode: 404, message: 'Calculator not found' });
@@ -85,7 +82,7 @@ export default {
   },
   head () {
     return {
-      title: `Edit Calculator: ${this.calculator.name}`
+      title: `Edit Calculator: ${this.calculator ? this.calculator.name : ''}`
     };
   },
   methods: {
@@ -94,26 +91,37 @@ export default {
       this.calculator.blocks.splice(this.blockEditor.index, 1, block);
     },
     openBlockEditor (blockIndex) {
-      this.blockEditorVisible[blockIndex] = true;
+      this.$store.dispatch('calculators/editor/openBlockInEditor', { blockIndex });
     },
     onUpClick (blockIndex) {
-      this.$store.dispatch('calculators/editor/moveBlockUp', { blockIndex });
+      this.$store.commit('calculators/editor/moveBlock', { blockIndex, delta: -1 });
     },
     onDownClick (blockIndex) {
-      this.$store.dispatch('calculators/editor/moveBlockDown', { blockIndex });
+      this.$store.commit('calculators/editor/moveBlock', { blockIndex, delta: +1 });
     },
     onSaveClick () {
       this.$store.dispatch('calculators/editor/save');
     },
     onDeleteClick () {
       this.$store.dispatch('calculators/editor/delete');
+    },
+    updateName (name) {
+      this.$store.commit('calculators/editor/setCalculatorFields', { name });
+    },
+    updateDescription (description) {
+      this.$store.commit('calculators/editor/setCalculatorFields', { description });
+    },
+    onAddBlock (type) {
+      this.$store.dispatch('calculators/editor/addNewBlock', { type });
     }
   },
   watch: {
     calculator: {
       deep: true,
       handler () {
-        this.dirty = true;
+        if (!this.dirty) {
+          this.$store.commit('calculators/editor/dirty');
+        }
       }
     }
   },
@@ -121,14 +129,16 @@ export default {
     blockIds () {
       return this.$store.state.calculators.editor.calculator.blocks.map(block => block.id);
     },
-    calculator () {
-      return this.$store.state.calculators.editor.calculator;
-    },
-    blockEditor () {
-      return this.$store.state.calculators.editor.blockEditor;
-    }
+    ...mapState({
+      calculator: s => s.calculators.editor.calculator,
+      blockEditor: s => s.calculators.editor.blockEditor,
+      dirty: s => s.calculators.editor.dirty,
+      saving: s => s.calculators.editor.saving,
+      deleting: s => s.calculators.editor.deleting
+    })
   },
   components: {
+    BlockEditorDialog
   }
 };
 </script>

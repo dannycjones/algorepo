@@ -6,7 +6,6 @@ import axios from '~/plugins/axios';
 export const state = () => ({
   calculator: null,
   blockEditor: {
-    block: null,
     index: -1,
     visible: false
   },
@@ -15,14 +14,21 @@ export const state = () => ({
 });
 
 export const mutations = {
-  setCalculator (state, calculator) {
+  setCalculator (state, { calculator }) {
     state.calculator = calculator;
   },
-  setBlockEditor (state, { blockIndex }) {
-    state.blockEditor.block = _.cloneDeep(state.calculator.blocks[blockIndex]);
+  setCalculatorFields (state, { name = null, description = null }) {
+    if (name !== null) {
+      state.calculator.name = name;
+    }
+    if (description !== null) {
+      state.calculator.description = description;
+    }
+  },
+  setBlockEditorIndex (state, { blockIndex }) {
     state.blockEditor.index = blockIndex;
   },
-  storeBlock (state, block) {
+  storeBlock (state, { block }) {
     state.calculator.blocks.splice(state.blockEditor.index, 1, block);
   },
   dirty (state) {
@@ -39,10 +45,7 @@ export const mutations = {
     state.deleting = true;
   },
   deleted (state) {
-    // Do nothing
-  },
-  updateBlock (state, block) {
-    state.blockEditor.block = block;
+    state.deleting = false;
   },
   moveBlock (state, { blockIndex, delta }) {
     const block = state.calculator.blocks[blockIndex];
@@ -52,14 +55,40 @@ export const mutations = {
       state.calculator.blocks.splice(newIndex, 0, block); // Reinsert it
     }
   },
-  setBlockEditorVisibility(state, visible) {
+  appendBlock (state, { block }) {
+    state.calculator.blocks.push(block);
+  },
+  setBlockEditorVisibility(state, { visible }) {
     state.blockEditor.visible = visible;
   }
 };
 
 export const actions = {
-  setCalculator ({ commit }, { calculator }) {
-    commit('setCalculator', calculator);
+  addNewBlock ({ commit, state }, { type }) {
+    const block = {
+      id: Date.now(),
+      type,
+      content: null,
+      label: '',
+      display: true
+    };
+
+    if (type === 'input') {
+      block.content = {
+        dependencies: [],
+        display: 'radio',
+        options: []
+      };
+    } else if (type === 'conditional') {
+      block.content = {
+        rules: [],
+        dependencies: []
+      };
+    }
+
+    commit('appendBlock', { block });
+    commit('setBlockEditorIndex', { blockIndex: state.calculator.blocks.length - 1 });
+    commit('setBlockEditorVisibility', { visible: true });
   },
   save ({ commit, state }, payload) {
     commit('saving', {});
@@ -73,26 +102,8 @@ export const actions = {
     window.alert('Not implemented');
     // commit('deleted', {});
   },
-  moveBlockUp ({ commit }, { blockIndex }) {
-    commit('moveBlock', { blockIndex, delta: -1 });
-  },
-  moveBlockDown ({ commit }, { blockIndex }) {
-    commit('moveBlock', { blockIndex, delta: +1 });
-  },
   openBlockInEditor ({ commit, state }, { blockIndex }) {
-    commit('setBlockEditorVisibility', true);
-    commit('setBlockEditor', { blockIndex });
-  },
-  closeBlockEditor ({ commit, state }, { save }) {
-    commit('setBlockEditorVisibility', false);
-    if (save) {
-      commit('storeBlock', state.blockEditor.block);
-    }
-  },
-  setBlockEditorVisibility ({ commit }, { visible }) {
-    commit('setBlockEditorVisibility', visible);
-  },
-  updateBlock ({ commit }, { block }) {
-    commit('updateBlock', block);
+    commit('setBlockEditorVisibility', { visible: true });
+    commit('setBlockEditorIndex', { blockIndex });
   }
 };

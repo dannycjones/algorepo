@@ -4,18 +4,17 @@
       <v-card-title>
         <span class="headline">Block Editor</span>
       </v-card-title>
-      <v-card-text>
+      <v-card-text v-if="block">
         <v-text-field v-model="block.id" label="Block ID" required></v-text-field>
         <v-text-field v-model="block.label" label="Block Label"></v-text-field>
-        <v-radio-group label="Block Type" v-model="block.type" row>
-          <v-radio v-for="blockType in availableOptions.types" :key="blockType" :label="blockType" :value="blockType"></v-radio>
-        </v-radio-group>
+        <v-checkbox label="Visible" v-model="block.display"></v-checkbox>
         <template v-if="block.type === 'input'">
           <v-select v-model="block.content.type" label="Input Type" :items="availableOptions.inputTypes"></v-select>
           <template v-if="block.content.type === 'options'">
-            <v-select v-model="block.content.dependencies" label="Dependencies" chips multiple :items="availableOptions.dependencies"></v-select>
-            <v-card v-if="block.content.dependencies.length > 0">
-              <!-- <DependencyTabs :dependencies="block.content.dependencies"></DependencyTabs> -->
+            <v-select v-model="block.content.display" label="Display As" :items="availableOptions.displayTypes"></v-select>
+            <v-select v-model="block.content.dependencies" label="Dependencies" @change="onDependenciesChange" chips multiple :items="availableDependencyOptions"></v-select>
+            <v-card>
+              <DependencyTabs :block="block" :dependencies="block.content.dependencies"></DependencyTabs>
             </v-card>
           </template>
           <template v-else-if="block.content.type === 'number'">
@@ -29,14 +28,14 @@
           <v-text-field v-model="block.content" label="Formula" required hint="Details about the expressions and functions can be found in the FAQ."></v-text-field>
         </template>
         <template v-if="block.type === 'conditional'">
-          <v-select v-model="block.content.dependencies" label="Dependencies" chips multiple :items="availableOptions.dependencies"></v-select>
-          <rules-panel :rules="block.content.rules"></rules-panel>
+          <v-select v-model="block.content.dependencies" label="Dependencies" chips multiple :items="availableDependencyOptions"></v-select>
+          <!-- <rules-panel :rules="block.content.rules"></rules-panel> -->
         </template>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="red" flat @click.native="onCancelBtn">Cancel</v-btn>
-        <v-btn color="blue" flat @click.native="onCloseBtn">Close</v-btn>
+        <v-btn color="blue" flat @click.native="onCloseBtn" :disabled="!block">Close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -45,53 +44,68 @@
 <script>
 import _ from 'lodash';
 
-// import DependencyTabs from './DependencyTabs.vue';
-import RulesPanel from './RulesPanel.vue';
+import DependencyTabs from './DependencyTabs.vue';
+// import RulesPanel from './RulesPanel.vue';
 
 export default {
   model: {
     prop: 'visible',
     event: 'visibilityChange'
   },
-  props: {
-    visible: {
-      type: Boolean,
-      default: false
-    },
-    block: {
-      type: Object,
-      required: true
-    }
-  },
   data () {
     const { calculator } = this.$store.state.calculators.editor;
     return {
-      scratchBlock: _.cloneDeep(this.block),
+      block: {
+        id: null,
+        type: null,
+        content: null,
+        label: null,
+        display: null
+      },
       availableOptions: {
-        types: ['input', 'formula', 'conditional'],
         inputTypes: ['options', 'number'],
-        dependencies: calculator.blocks.map(b => b.id)
+        displayTypes: ['radio', 'select']
       }
     }
   },
   computed: {
-    isVisible: {
-      get () {
-        return this.visible;
-      },
-      set (value) {
-        this.emit('visibilityChange', value);
+    isVisible () {
+      return this.$store.state.calculators.editor.blockEditor.visible;
+    },
+    blockIndex () {
+      return this.$store.state.calculators.editor.blockEditor.index;
+    },
+    realBlock () {
+      return this.$store.state.calculators.editor.calculator.blocks[this.blockIndex];
+    },
+    dependencies () {
+      if (this.block && this.block.content) {
+        return this.block.content.dependencies; 
+      } else {
+        return [];
       }
+    },
+    calculator () {
+      return this.$store.state.calculators.editor.calculator;
+    },
+    availableDependencyOptions () {
+      return this.calculator.blocks.map(b => b.id).filter(b => b.id !== this.block.id);
     }
   },
-  components: { RulesPanel },
+  watch: {
+    realBlock () {
+      this.resetBlock();
+    }
+  },
+  components: { DependencyTabs },
   methods: {
     onCancelBtn () {
-      this.isVisible = false;
+      this.$store.commit('calculators/editor/setBlockEditorVisibility', { visible: false });
       this.resetBlock();
     },
     onCloseBtn () {
-      this.isVisible = false;
+      this.$store.commit('calculators/editor/storeBlock', { block: this.block });
+      this.$store.commit('calculators/editor/setBlockEditorVisibility', { visible: false });
       this.block = this.scratchBlock;
       this.resetBlock();
     },
@@ -102,7 +116,25 @@ export default {
       this.$refs.editValueDialog.focus();
     },
     resetBlock () {
-      this.scratchBlock = _.deepCopy(this.block);
+      this.block = _.cloneDeep(this.realBlock);
+    },
+    onDependenciesChange (newValue) {
+      this.block.content.options = this.createOptions(newValue);
+    },
+    createOptions (tailDeps, prevSelect = []) {
+      if (tailDeps.length < 1) {
+        return [];
+      } else {
+        const head = tailDeps[0];
+        let optsForDep = this.calculator.blocks.find(b => b.id === head).content.options;
+        console.log('prevSelect', prevSelect, 'optsForDep', optsForDep);
+        optsForDep = optsForDep.map(o => o.value);
+        let options = {};
+        for (let opt of optsForDep) {
+          options[opt] = this.createOptions(tailDeps.slice(1), [...prevSelect, opt]);
+        }
+        return options;
+      }
     }
   }
 }

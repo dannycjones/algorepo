@@ -59,7 +59,7 @@ export default {
       this.attemptLogin();
     },
     hide () {
-      this.$store.dispatch('hideLoginDialog');
+      this.$store.commit('hideLoginDialog');
     },
     loginFailedSnackbar () {
       this.closeSnackbar();
@@ -85,13 +85,13 @@ export default {
     },
     attemptLogin () {
       axios.post('/api/auth/login', { ...this.form }).then(res => {
-        this.$store.dispatch('setUser', res.data.user);
+        this.$store.commit('setUser', res.data.user);
         this.loginSuccessfulSnackbar();
         this.hide();
       }).catch(e => {
         console.error(e);
         this.loginFailedSnackbar();
-        this.$store.dispatch('clearUser');
+        this.$store.commit('clearUser');
       });
     }
   },

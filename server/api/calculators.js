@@ -54,6 +54,20 @@ router.get('/', (req, res, next) => {
   });
 });
 
+router.post('/', async (req, res, next) => {
+  const { calculator } = req.body;
+  calculator.author = await User.findOne({}).exec();
+  if (calculator == null) {
+    next('No calculator sent');
+  }
+  delete calculator._id;
+  
+  console.log('WOah, lets create');
+  const savedCalculator = await Calculator.create(calculator);
+  console.log('post create', savedCalculator);
+  res.json({ calculator: savedCalculator });
+});
+
 router.get('/:id', async (req, res, next) => {
   let calculator;
   try {
@@ -68,12 +82,13 @@ router.get('/:id', async (req, res, next) => {
 
 router.put('/:id', async (req, res, next) => {
   const { calculator } = req.body;
+  console.log(calculator);
   if (calculator == null) {
     next('No calculator sent');
   }
   delete calculator._id;
   
-  await Calculator.findByIdAndUpdate(req.params.id, { $set: calculator }).then(console.log).catch(console.error);
+  await Calculator.findByIdAndUpdate(req.params.id, { $set: calculator }).catch(next);
   res.sendStatus(200);
 });
 

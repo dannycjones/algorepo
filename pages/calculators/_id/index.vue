@@ -60,7 +60,7 @@ export default {
   asyncData ({ params, error }) {
     return axios.get('/api/calculators/' + params.id)
       .then((res) => {
-        return { calculator: res.data, hello: 7, inputType: 'select' };
+        return { calculator: res.data };
       })
       .catch((e) => {
         error({ statusCode: 404, message: 'calculator not found' });

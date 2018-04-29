@@ -32,8 +32,7 @@ const contentSchema = new Schema({
 const blockSchema = new Schema({
   id: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
   type: String,
   content: {},
