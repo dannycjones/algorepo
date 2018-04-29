@@ -1,0 +1,15 @@
+sudo: true
+dist: trusty
+
+jobs:
+  include:
+    - stage: build docker image
+      script:
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - docker build -t $DOCKER_USERNAME/dis_web .
+      - docker images
+      - docker push $DOCKER_USERNAME/dis_web
+
+env:
+  global:
+  - secure: 2kXe9dF8BnU1eKvLM/V3farzuvuqfbDgktaJwaZ2KPRr++txv6OSM9pKpz5PrKzAvdMTtodDUx5r2XhGc65nBhPde9TUgp+AaauAwSaNKTntx5WhUGZmTInTFipWKKUf4J3oXKMOQ+kACMgeVDjjTXmRq36VgWe5iLwTdBBtuec2bWEpHt9/N1e5gqLjSG+9AQ7Z8uOO9GG1s5XA+UWEOxvv+kf7M3I5S6NmmYRvojiN6n75FCrBARUHAhIlZEW7J8Avx6a2nDOrDzLE5vuSKUrPDNok0ddPnrUZEyUuy50XOkbppNgO5aRu8X7xOxjqDX2YPK9zD3sObMBErVvzKFrUbza+0/HmvASvHZQN8ILX7TaqffmRnQXlrs/BsICm3VtMGdofyKj32IkY4wBXWwFnpniI0yQqfDcj3nokiCSn9nyrEHxQyBUsRPCQE27mdxgcfjQcehqBxJlO8kb/500FSM/hpsuIalfKzPDYZ0UoAJdSGr1xEoUv5KVXp8qlYiWp8DfmIMM7P9L7mhYO5X0u9D1rqyRqNvCiC7gojljPf1Hw+x7kv9Ac63baGEKU75az0cKhMzIbVc/s8cu+084SaxpCkgKkQRRMLB40DdKP06yVZcIZdDLXPJR+xFyYDiyEbobvvR75NzcvCZR0Oz9yuSJfIFIo4pM3bs3n+IU=
