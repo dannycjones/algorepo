@@ -121,6 +121,7 @@ export default {
       this.block.content.options = this.createOptions(newValue);
     },
     createOptions (tailDeps, prevSelect = []) {
+      console.log('from', this.block.content.options);
       if (tailDeps.length < 1) {
         return [];
       } else {
@@ -132,6 +133,7 @@ export default {
         for (let opt of optsForDep) {
           options[opt] = this.createOptions(tailDeps.slice(1), [...prevSelect, opt]);
         }
+        console.log('to', options);
         return options;
       }
     }

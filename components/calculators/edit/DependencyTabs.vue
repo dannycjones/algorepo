@@ -70,14 +70,15 @@ export default {
       return this.$store.state.calculators.editor.calculator.blocks;
     },
     options () {
-      if (Array.isArray(this.dependencies) && this.dependencies.length < 1) {
-        return initialAccumulator;
-      }
-
       const initialAccumulator = this.block.content.options;
+      console.log('initialAccumulator', initialAccumulator);
+      console.log('this.dependencies', this.dependencies);
+      if (Array.isArray(this.previousDependencySelections) && this.previousDependencySelections.length < 1) {
+        return Array.isArray(initialAccumulator) ? initialAccumulator : undefined;
+      }
       const prevDeps = [...this.previousDependencySelections];
-      console.log('a', initialAccumulator, prevDeps);
-      return prevDeps.reduce((acc, val) => acc[val], initialAccumulator);
+      console.log('prevDeps', prevDeps);
+      return prevDeps.reduce((acc, val) => acc[val], initialAccumulator);;
     }
   }
 }
