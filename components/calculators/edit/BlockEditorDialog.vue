@@ -88,7 +88,7 @@ export default {
       return this.$store.state.calculators.editor.calculator;
     },
     availableDependencyOptions () {
-      return this.calculator.blocks.map(b => b.id).filter(b => b.id !== this.block.id);
+      return this.calculator.blocks.filter(b => b.type === 'input').filter(b => b.content.dependencies.length < 1).filter(b => b.id !== this.block.id).map(b => b.id);
     }
   },
   watch: {
