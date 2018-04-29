@@ -28,8 +28,7 @@
           <v-text-field v-model="block.content" label="Formula" required hint="Details about the expressions and functions can be found in the FAQ."></v-text-field>
         </template>
         <template v-if="block.type === 'conditional'">
-          <v-select v-model="block.content.dependencies" label="Dependencies" chips multiple :items="availableDependencyOptions"></v-select>
-          <!-- <rules-panel :rules="block.content.rules"></rules-panel> -->
+          <rules-panel :rules="block.content.rules"></rules-panel>
         </template>
       </v-card-text>
       <v-card-actions>
@@ -45,7 +44,7 @@
 import _ from 'lodash';
 
 import DependencyTabs from './DependencyTabs.vue';
-// import RulesPanel from './RulesPanel.vue';
+import RulesPanel from './RulesPanel.vue';
 
 export default {
   model: {
@@ -97,7 +96,7 @@ export default {
       this.resetBlock();
     }
   },
-  components: { DependencyTabs },
+  components: { DependencyTabs, RulesPanel },
   methods: {
     onCancelBtn () {
       this.$store.commit('calculators/editor/setBlockEditorVisibility', { visible: false });

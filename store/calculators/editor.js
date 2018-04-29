@@ -81,8 +81,7 @@ export const actions = {
       };
     } else if (type === 'conditional') {
       block.content = {
-        rules: [],
-        dependencies: []
+        rules: []
       };
     }
 
