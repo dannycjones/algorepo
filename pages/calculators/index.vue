@@ -54,7 +54,6 @@ export default {
       }
 
       const { data: { calculator: newCalc } } = await axios.post('/api/calculators', { calculator });
-      console.log('newCalc', newCalc);
 
       this.$router.push({ name: 'calculators-id', params: { id: newCalc._id } });
     }

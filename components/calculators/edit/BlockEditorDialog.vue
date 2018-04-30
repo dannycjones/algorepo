@@ -121,19 +121,16 @@ export default {
       this.block.content.options = this.createOptions(newValue);
     },
     createOptions (tailDeps, prevSelect = []) {
-      console.log('from', this.block.content.options);
       if (tailDeps.length < 1) {
         return [];
       } else {
         const head = tailDeps[0];
         let optsForDep = this.calculator.blocks.find(b => b.id === head).content.options;
-        console.log('prevSelect', prevSelect, 'optsForDep', optsForDep);
         optsForDep = optsForDep.map(o => o.value);
         let options = {};
         for (let opt of optsForDep) {
           options[opt] = this.createOptions(tailDeps.slice(1), [...prevSelect, opt]);
         }
-        console.log('to', options);
         return options;
       }
     }

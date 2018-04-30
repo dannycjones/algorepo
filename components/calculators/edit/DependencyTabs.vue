@@ -55,15 +55,6 @@ export default {
       if (this.head === undefined) {
         return null;
       }
-
-      // let options = this.allBlocks.find(b => b.id === this.head).content.options;
-      // console.log('options', options, this.previousDependencySelections);
-      // const reduced = this.previousDependencySelections.reduce((acc, val) => acc[val], options);
-      // console.log('reduced', reduced);
-      // return reduced.map(o => o.value);
-
-      // console.log('head', this.head);
-      // console.log('find hting', );
       return this.allBlocks.find(b => b.id === this.head).content.options.map(o => o.value);
     },
     allBlocks () {
@@ -71,13 +62,10 @@ export default {
     },
     options () {
       const initialAccumulator = this.block.content.options;
-      console.log('initialAccumulator', initialAccumulator);
-      console.log('this.dependencies', this.dependencies);
       if (Array.isArray(this.previousDependencySelections) && this.previousDependencySelections.length < 1) {
         return Array.isArray(initialAccumulator) ? initialAccumulator : undefined;
       }
       const prevDeps = [...this.previousDependencySelections];
-      console.log('prevDeps', prevDeps);
       return prevDeps.reduce((acc, val) => acc[val], initialAccumulator);;
     }
   }
