@@ -1,14 +1,23 @@
 sudo: true
 dist: trusty
 
+language: node_js
+node_js:
+  - "lts/carbon"
+
 jobs:
   include:
-    - stage: build docker image
-      script:
-      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker build -t $DOCKER_USERNAME/dis_web .
-      - docker images
-      - docker push $DOCKER_USERNAME/dis_web
+    - stage: linting and testing
+      script: yarn test
+      before_deploy:
+        - docker build -t $DOCKER_USERNAME/dis_web .
+        - docker images
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      deploy:
+        provider: script
+        script: docker push $DOCKER_USERNAME/dis_web
+        on:
+          branch: master
 
 env:
   global:
