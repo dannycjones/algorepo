@@ -2,7 +2,7 @@
 
 > A website hosting a repository of algorithms which users can use and publish
 
-[![Build Status](https://travis-ci.com/dannycjones/algorepo.svg?token=AQNAqUtbdpFqfPrYmwKT&branch=master)](https://travis-ci.com/dannycjones/algorepo) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdannycjones%2Falgorepo.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdannycjones%2Falgorepo?ref=badge_shield)
+[![Build Status](https://travis-ci.org/dannycjones/algorepo.svg?branch=master)](https://travis-ci.org/dannycjones/algorepo) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdannycjones%2Falgorepo.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdannycjones%2Falgorepo?ref=badge_shield)
 
 ## Getting Started
 

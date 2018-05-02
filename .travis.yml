@@ -1,24 +1,22 @@
 sudo: true
 dist: trusty
-
 language: node_js
 node_js:
-  - "lts/carbon"
-
+- lts/carbon
 jobs:
   include:
-    - stage: linting and testing
-      script: yarn test
-      before_deploy:
-        - docker build -t $DOCKER_USERNAME/dis_web .
-        - docker images
-        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      deploy:
-        provider: script
-        script: docker push $DOCKER_USERNAME/dis_web
-        on:
-          branch: master
-
+  - stage: linting and testing
+    script: yarn test
+    before_deploy:
+    - docker build -t $DOCKER_USERNAME/dis_web .
+    - docker images
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    deploy:
+      provider: script
+      script: docker push $DOCKER_USERNAME/dis_web
+      on:
+        branch: master
 env:
   global:
-  - secure: 2kXe9dF8BnU1eKvLM/V3farzuvuqfbDgktaJwaZ2KPRr++txv6OSM9pKpz5PrKzAvdMTtodDUx5r2XhGc65nBhPde9TUgp+AaauAwSaNKTntx5WhUGZmTInTFipWKKUf4J3oXKMOQ+kACMgeVDjjTXmRq36VgWe5iLwTdBBtuec2bWEpHt9/N1e5gqLjSG+9AQ7Z8uOO9GG1s5XA+UWEOxvv+kf7M3I5S6NmmYRvojiN6n75FCrBARUHAhIlZEW7J8Avx6a2nDOrDzLE5vuSKUrPDNok0ddPnrUZEyUuy50XOkbppNgO5aRu8X7xOxjqDX2YPK9zD3sObMBErVvzKFrUbza+0/HmvASvHZQN8ILX7TaqffmRnQXlrs/BsICm3VtMGdofyKj32IkY4wBXWwFnpniI0yQqfDcj3nokiCSn9nyrEHxQyBUsRPCQE27mdxgcfjQcehqBxJlO8kb/500FSM/hpsuIalfKzPDYZ0UoAJdSGr1xEoUv5KVXp8qlYiWp8DfmIMM7P9L7mhYO5X0u9D1rqyRqNvCiC7gojljPf1Hw+x7kv9Ac63baGEKU75az0cKhMzIbVc/s8cu+084SaxpCkgKkQRRMLB40DdKP06yVZcIZdDLXPJR+xFyYDiyEbobvvR75NzcvCZR0Oz9yuSJfIFIo4pM3bs3n+IU=
+  - secure: OzE+qZv1Jd0JfVtOm8nDCjSuTxoHXaEFHcM8473SZkNBIXGtrEZCu002l7Jazdodv3CajdETNDAir5Sj361NGrRZOMbsdCGIgfysGBp6qauIvb0IS5QJv/6zyd8F9vwo4JoiaM9t60+r8wVWefvhPQCiWVaHpkd/UZg4ilefGkl6rQ+EDd7ru+F4svTJ4WJ1Xtn40Aqn6DjfVPcTXvz0MoFKMELryAAf+jQui59kJdu1cSWLRkneV8KkALB5BWUMmuxR5lybuhP21D38jJ4fWwDeI32/DtwtlcpycJNzrAf1hHrzviy/WtR4iada2JsDs/ICPG/RRDx3JjAuj5Krq5+hbGsDyKwQsBD3uH07hIdLZsisIXqj+0KarQZOYw3hWljzE7RYUQ+3hoakB62mwcsmv7Ol4AOK0kWhXKOkuSQwNR4tBiY+GUTxd3q8rSw98WdZs6TKgUBK3roInpKCNC5Xix18SaZ74uhtHWt0bA2C2GnsF5IQwYD61e3vx/ef21Y1i9KEQ7oS+Uk4FoeAgFaQjhqaNudyxh9Ime2UwZV8huYOpcKui1KW4udxzBshsw5tXGgUt820Z4nHIJ1/gEBJ++bBF5DIKagHUXhVg1Xd7qIZPdJPjPveAMF4ubTBtg4qJoLQmMMyT1NVyipjCwI6GZhVxFVQkAD6i1/JlYY=
+  - secure: wWFoRpf7YZQcAupjy9Rs1qT7ForLloAfGFwqRtQuToR1VPbyNHQ/5p+WFuBL4+lPwWJZwvIEy3sUh6Q19de+pmVrHuiQPtrRQhEi0iodcd3v7Dl0X+460WT6Z4eAf6EigUWdOuEsXI55cmETjsqT8U1zyyU1f29Fz02jXcEXWlXq+cY7GUhVpZLum0ZxGZUBM0dEGKuqVDcmoMkhDV44//gTa75iVp5kIxruIp4UAJ4OdrsuVs3wzzA2IIgabXtrgdAVIrd/DOf/PALzMlc1OmvpoNWcrBbldM1PtJ1X+GEIuNNKk3kUK88cA6dALQOyA1WD6I67WLgHvmeVKo1bGO+qalf5MPt9/v6fmcY3r7VESwLsghqwRbRIDMRZlF+zU8RZbrEFlPfFjWWnk5BwTMyN9wo9KShM5Z6TVE1gj/UL5vMFT8kN0ssQhkfk99Gas/MoyZgvNOG2ChRQzE8t+NInfJRamz9fR/bxatPl7RF3aYWUwUBFjKztlHKkWhDa9/VOXdOeh1mZIBkebcrhGia+EvFXxXoeC4EvnjvOo53vry3fdgVuQUS5TU1hvoYwE7xokL7BrYjQ10krXe1VRpe+9OfxYEyanSAfq+GrcB44k2zOs3w0CtjL1NrVroLOV3yZPJnKs7rJFfOGVfY5ysF/iXmheOjHVqag3z310qs=
